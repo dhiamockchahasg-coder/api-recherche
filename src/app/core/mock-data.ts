@@ -1,4 +1,43 @@
-import { InterpolResponse, EtalabResponse, WorldBankResponse, LittleSisResponse } from '../models/compliance.models';
+import { InterpolResponse, EtalabResponse, WorldBankResponse, LittleSisResponse, CSLResponse, OpenCorporatesResponse } from '../models/compliance.models';
+
+export const MOCK_OPENCORPORATES: OpenCorporatesResponse = {
+    results: {
+        total_count: 1,
+        companies: [
+            {
+                company: {
+                    name: "OPEN DATA SYSTEMS LTD",
+                    company_number: "01234567",
+                    jurisdiction_code: "gb",
+                    company_type: "Private Limited Company",
+                    current_status: "Active"
+                }
+            }
+        ]
+    }
+};
+
+export const MOCK_CSL: CSLResponse = {
+    total: 1,
+    results: [
+        {
+            id: "CSL-999",
+            name: "GLOBAL TRADE CORP (TEST MATCH)",
+            alt_names: ["GTC LOGISTICS", "WORLD TRADE ENTITY"],
+            type: "Entity",
+            source: "SDN (OFAC)",
+            source_information_url: "https://ofac.treasury.gov/specially-designated-nationals-list-sdn",
+            addresses: [
+                {
+                    address: "123 Sanctions Ave",
+                    city: "Washington",
+                    state: "DC",
+                    country: "US"
+                }
+            ]
+        }
+    ]
+};
 
 export const MOCK_INTERPOL: InterpolResponse = {
     total: 1,

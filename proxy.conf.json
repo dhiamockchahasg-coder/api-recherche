@@ -22,5 +22,17 @@
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/worldbank": "" }
+  },
+  "/api-proxy/csl": {
+    "target": "https://api.trade.gov",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/csl": "" }
+  },
+  "/api-proxy/opencorporates": {
+    "target": "https://api.opencorporates.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/opencorporates": "" }
   }
 }

@@ -13,7 +13,7 @@
         {{ loading ? 'Analyse...' : 'Lancer l\'Analyse' }}
       </button>
     </div>
-    <span class="hint">Sources : LittleSis, Etalab, Interpol, World Bank...</span>
+    <span class="hint">Sources : CSL, OpenCorporates, LittleSis, Etalab, Interpol, World Bank...</span>
   </div>
 
   <nav class="tabs">
@@ -30,7 +30,7 @@
     <section class="results-grid">
       
       <!-- LITTLESIS / PEP -->
-      <div class="result-card" *ngIf="unifiedResults.littlesis">
+      <div class="result-card" *ngIf="unifiedResults.littlesis && shouldShowCard('littlesis')">
         <div class="card-tag sanctions">PEP & Sanctions</div>
         <h3>LittleSis Entities</h3>
         <div class="entity-list">
@@ -49,7 +49,7 @@
       </div>
 
       <!-- ETALAB / COMPANIES -->
-      <div class="result-card" *ngIf="unifiedResults.etalab">
+      <div class="result-card" *ngIf="unifiedResults.etalab && shouldShowCard('etalab')">
         <div class="card-tag companies">Registre Entreprises</div>
         <h3>Résultats Etalab</h3>
         <div class="entity-list">
@@ -69,7 +69,7 @@
       </div>
 
       <!-- INTERPOL -->
-      <div class="result-card" *ngIf="unifiedResults.interpol">
+      <div class="result-card" *ngIf="unifiedResults.interpol && shouldShowCard('interpol')">
         <div class="card-tag criminals">Criminal Monitoring</div>
         <h3>Interpol Red Notices</h3>
         <div class="interpol-results">
@@ -81,7 +81,7 @@
       </div>
 
       <!-- WORLD BANK -->
-      <div class="result-card" *ngIf="unifiedResults.worldbank">
+      <div class="result-card" *ngIf="unifiedResults.worldbank && shouldShowCard('worldbank')">
         <div class="card-tag debarred">Debarred Lists</div>
         <h3>World Bank Documents</h3>
         <div class="wb-list">
@@ -90,6 +90,44 @@
             <div class="doc-meta">{{ doc.value.docdt | date }} • {{ doc.value.count }}</div>
           </div>
         </div>
+      </div>
+
+      <!-- CSL / GLOBAL SANCTIONS -->
+      <div class="result-card" *ngIf="unifiedResults.csl && shouldShowCard('csl')">
+        <div class="card-tag csl">Global Sanctions (CSL)</div>
+        <h3>Trade.gov Results</h3>
+        <div class="entity-list">
+          <div class="entity-item" *ngFor="let item of unifiedResults.csl.results">
+            <div class="entity-header">
+              <span class="entity-name">{{ item.name }}</span>
+              <span class="entity-source">{{ item.source }}</span>
+            </div>
+            <p class="entity-meta" *ngIf="item.alt_names?.length">AKA: {{ item.alt_names.join(', ') }}</p>
+            <div class="addresses" *ngIf="item.addresses?.length">
+              <div class="address-item" *ngFor="let addr of item.addresses">
+                {{ addr.address }}, {{ addr.city }}, {{ addr.country }}
+              </div>
+            </div>
+            <a [href]="item.source_information_url" target="_blank" class="source-link">Plus d'infos</a>
+          </div>
+        </div>
+        <div *ngIf="unifiedResults.csl.results.length === 0" class="no-results">Aucune sanction trouvée (CSL).</div>
+      </div>
+
+      <!-- OPENCORPORATES -->
+      <div class="result-card" *ngIf="unifiedResults.opencorporates && shouldShowCard('opencorporates')">
+        <div class="card-tag companies">Global Registry</div>
+        <h3>OpenCorporates</h3>
+        <div class="entity-list">
+          <div class="entity-item" *ngFor="let item of unifiedResults.opencorporates.results.companies">
+            <div class="entity-header">
+              <span class="entity-name">{{ item.company.name }}</span>
+              <span class="entity-siren">{{ item.company.jurisdiction_code | uppercase }}: {{ item.company.company_number }}</span>
+            </div>
+            <p class="entity-meta">{{ item.company.company_type }} • Status: {{ item.company.current_status }}</p>
+          </div>
+        </div>
+        <div *ngIf="unifiedResults.opencorporates.results.total_count === 0" class="no-results">Aucune entreprise trouvée.</div>
       </div>
 
       <!-- PLACEHOLDER / LOADING -->

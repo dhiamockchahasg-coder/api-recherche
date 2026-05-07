@@ -6,14 +6,18 @@ import {
   LittleSisResponse, 
   EtalabResponse, 
   InterpolResponse, 
-  WorldBankResponse 
+  WorldBankResponse,
+  CSLResponse,
+  OpenCorporatesResponse
 } from '../../models/compliance.models';
 import { environment } from '../../../environments/environment';
 import { 
   MOCK_LITTLESIS, 
   MOCK_ETALAB, 
   MOCK_INTERPOL, 
-  MOCK_WORLD_BANK 
+  MOCK_WORLD_BANK,
+  MOCK_CSL,
+  MOCK_OPENCORPORATES
 } from '../mock-data';
 
 @Injectable({
@@ -24,7 +28,9 @@ export class ComplianceService {
     littlesis: '/api-proxy/littlesis/api/entities/search',
     etalab: '/api-proxy/recherche-entreprises/search',
     interpol: 'https://ws-public.interpol.int/notices/v1/red',
-    worldbank: '/api-proxy/worldbank/api/v3/wds'
+    worldbank: '/api-proxy/worldbank/api/v3/wds',
+    csl: '/api-proxy/csl/gateway/v1/consolidated_screening_list/search',
+    opencorporates: '/api-proxy/opencorporates/v0.4/companies/search'
   };
 
   constructor(private http: HttpClient) {}
@@ -60,6 +66,22 @@ export class ComplianceService {
     return this.http.get<WorldBankResponse>(this.endpoints.worldbank, { params }).pipe(
       timeout(environment.apiTimeout),
       catchError(() => of(MOCK_WORLD_BANK))
+    );
+  }
+
+  searchCSL(query: string): Observable<CSLResponse> {
+    if (environment.useMocks) return of(MOCK_CSL);
+    return this.http.get<CSLResponse>(this.endpoints.csl, { params: { q: query } }).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of(MOCK_CSL))
+    );
+  }
+
+  searchOpenCorporates(query: string): Observable<OpenCorporatesResponse> {
+    if (environment.useMocks) return of(MOCK_OPENCORPORATES);
+    return this.http.get<OpenCorporatesResponse>(this.endpoints.opencorporates, { params: { q: query } }).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of(MOCK_OPENCORPORATES))
     );
   }
 }

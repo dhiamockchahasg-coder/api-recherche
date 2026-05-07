@@ -58,3 +58,38 @@ export interface LittleSisEntity {
 export interface LittleSisResponse {
   data: LittleSisEntity[];
 }
+
+export interface CSLResult {
+  id: string;
+  name: string;
+  alt_names: string[];
+  type: string;
+  source: string;
+  source_information_url: string;
+  addresses: Array<{
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+  }>;
+}
+
+export interface CSLResponse {
+  total: number;
+  results: CSLResult[];
+}
+
+export interface OpenCorporatesResponse {
+  results: {
+    total_count: number;
+    companies: Array<{
+      company: {
+        name: string;
+        company_number: string;
+        jurisdiction_code: string;
+        company_type: string;
+        current_status: string;
+      }
+    }>
+  }
+}

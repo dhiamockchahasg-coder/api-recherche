@@ -53,6 +53,8 @@ export class DashboardComponent implements OnDestroy {
     this.compliance.searchEtalab(this.searchQuery).subscribe(r => this.unifiedResults.etalab = r);
     this.compliance.searchInterpol(this.searchQuery).subscribe(r => this.unifiedResults.interpol = r);
     this.compliance.searchWorldBank(this.searchQuery).subscribe(r => this.unifiedResults.worldbank = r);
+    this.compliance.searchCSL(this.searchQuery).subscribe(r => this.unifiedResults.csl = r);
+    this.compliance.searchOpenCorporates(this.searchQuery).subscribe(r => this.unifiedResults.opencorporates = r);
     
     setTimeout(() => {
       this.status = 'success';
@@ -74,5 +76,16 @@ export class DashboardComponent implements OnDestroy {
 
   private stopTimer() {
     this.timerSub?.unsubscribe();
+  }
+
+  shouldShowCard(type: string): boolean {
+    if (this.activeCategory === 'unified') return true;
+    if (this.activeCategory === 'sanctions') {
+      return ['littlesis', 'interpol', 'csl'].includes(type);
+    }
+    if (this.activeCategory === 'entities') {
+      return ['etalab', 'worldbank', 'opencorporates'].includes(type);
+    }
+    return false;
   }
 }
