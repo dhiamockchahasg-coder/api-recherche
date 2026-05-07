@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, timeout } from 'rxjs/operators';
-import { interval, Subscription } from 'rxjs';
+import { interval, Subscription, forkJoin } from 'rxjs';
 import { ComplianceService } from '../../core/services/compliance.service';
 
 type TestStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -49,17 +49,23 @@ export class DashboardComponent implements OnDestroy {
     this.startTimer();
     this.lastApi = 'Analyse Globale';
 
-    this.compliance.searchLittleSis(this.searchQuery).subscribe(r => this.unifiedResults.littlesis = r);
-    this.compliance.searchEtalab(this.searchQuery).subscribe(r => this.unifiedResults.etalab = r);
-    this.compliance.searchInterpol(this.searchQuery).subscribe(r => this.unifiedResults.interpol = r);
-    this.compliance.searchWorldBank(this.searchQuery).subscribe(r => this.unifiedResults.worldbank = r);
-    this.compliance.searchCSL(this.searchQuery).subscribe(r => this.unifiedResults.csl = r);
-    this.compliance.searchOpenCorporates(this.searchQuery).subscribe(r => this.unifiedResults.opencorporates = r);
-    
-    setTimeout(() => {
-      this.status = 'success';
-      this.stopTimer();
-    }, 2000);
+    const requests = {
+      littlesis: this.compliance.searchLittleSis(this.searchQuery),
+      etalab: this.compliance.searchEtalab(this.searchQuery),
+      interpol: this.compliance.searchInterpol(this.searchQuery),
+      worldbank: this.compliance.searchWorldBank(this.searchQuery),
+      csl: this.compliance.searchCSL(this.searchQuery),
+      opencorporates: this.compliance.searchOpenCorporates(this.searchQuery)
+    };
+
+    forkJoin(requests).pipe(
+      finalize(() => {
+        this.status = 'success';
+        this.stopTimer();
+      })
+    ).subscribe(results => {
+      this.unifiedResults = results;
+    });
   }
 
   reset() {

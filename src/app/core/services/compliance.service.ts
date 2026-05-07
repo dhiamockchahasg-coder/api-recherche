@@ -36,52 +36,54 @@ export class ComplianceService {
   constructor(private http: HttpClient) {}
 
   searchLittleSis(query: string): Observable<LittleSisResponse> {
-    if (environment.useMocks) return of(MOCK_LITTLESIS);
     return this.http.get<LittleSisResponse>(this.endpoints.littlesis, { params: { q: query } }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of(MOCK_LITTLESIS))
+      catchError(() => of({ data: [] }))
     );
   }
 
   searchEtalab(query: string): Observable<EtalabResponse> {
-    if (environment.useMocks) return of(MOCK_ETALAB);
     const params = new HttpParams().set('q', query).set('per_page', '5').set('minimal', 'True');
     return this.http.get<EtalabResponse>(this.endpoints.etalab, { params }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of(MOCK_ETALAB))
+      catchError(() => of({ results: [], total_results: 0 }))
     );
   }
 
   searchInterpol(name: string): Observable<InterpolResponse> {
-    if (environment.useMocks) return of(MOCK_INTERPOL);
     return this.http.get<InterpolResponse>(this.endpoints.interpol, { params: { name } }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of(MOCK_INTERPOL))
+      catchError(() => of({ total: 0, _embedded: { notices: [] } }))
     );
   }
 
   searchWorldBank(query: string): Observable<WorldBankResponse> {
-    if (environment.useMocks) return of(MOCK_WORLD_BANK);
     const params = new HttpParams().set('qterm', query).set('format', 'json');
     return this.http.get<WorldBankResponse>(this.endpoints.worldbank, { params }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of(MOCK_WORLD_BANK))
+      catchError(() => of({ total: 0, documents: {} }))
     );
   }
 
   searchCSL(query: string): Observable<CSLResponse> {
-    if (environment.useMocks) return of(MOCK_CSL);
-    return this.http.get<CSLResponse>(this.endpoints.csl, { params: { q: query } }).pipe(
+    let params = new HttpParams().set('q', query);
+    if (environment.cslApiKey) {
+      params = params.set('api_key', environment.cslApiKey);
+    }
+    return this.http.get<CSLResponse>(this.endpoints.csl, { params }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of(MOCK_CSL))
+      catchError(() => of({ total: 0, results: [] }))
     );
   }
 
   searchOpenCorporates(query: string): Observable<OpenCorporatesResponse> {
-    if (environment.useMocks) return of(MOCK_OPENCORPORATES);
-    return this.http.get<OpenCorporatesResponse>(this.endpoints.opencorporates, { params: { q: query } }).pipe(
+    let params = new HttpParams().set('q', query);
+    if (environment.openCorporatesApiKey) {
+      params = params.set('api_token', environment.openCorporatesApiKey);
+    }
+    return this.http.get<OpenCorporatesResponse>(this.endpoints.opencorporates, { params }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of(MOCK_OPENCORPORATES))
+      catchError(() => of({ results: { total_count: 0, companies: [] } }))
     );
   }
 }
