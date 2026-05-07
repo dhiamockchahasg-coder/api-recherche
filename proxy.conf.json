@@ -1,0 +1,26 @@
+{
+  "/api-proxy/interpol": {
+    "target": "https://ws-public.interpol.int",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/interpol": "" }
+  },
+  "/api-proxy/recherche-entreprises": {
+    "target": "https://recherche-entreprises.api.gouv.fr",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/recherche-entreprises": "" }
+  },
+  "/api-proxy/littlesis": {
+    "target": "https://littlesis.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/littlesis": "" }
+  },
+  "/api-proxy/worldbank": {
+    "target": "https://search.worldbank.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/worldbank": "" }
+  }
+}

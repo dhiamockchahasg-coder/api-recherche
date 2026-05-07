@@ -1,0 +1,121 @@
+<div class="dashboard-container">
+  <header>
+    <h1>Compliance Intelligence Dashboard</h1>
+    <p>Outil unifié de vigilance LCB-FT et vérification d'identité</p>
+  </header>
+
+  <div class="search-bar">
+    <div class="input-wrapper">
+      <input type="text" [(ngModel)]="searchQuery" 
+             placeholder="Rechercher un Nom, SIREN ou Entité..." 
+             (keyup.enter)="performUnifiedSearch()">
+      <button class="btn-primary" (click)="performUnifiedSearch()" [disabled]="loading || !searchQuery">
+        {{ loading ? 'Analyse...' : 'Lancer l\'Analyse' }}
+      </button>
+    </div>
+    <span class="hint">Sources : LittleSis, Etalab, Interpol, World Bank...</span>
+  </div>
+
+  <nav class="tabs">
+    <button *ngFor="let cat of categories" 
+            [class.active]="activeCategory === cat.id"
+            (click)="activeCategory = cat.id">
+      {{ cat.label }}
+    </button>
+  </nav>
+
+  <main class="content">
+    
+    <!-- RESULTS GRID (DYNAMIC) -->
+    <section class="results-grid">
+      
+      <!-- LITTLESIS / PEP -->
+      <div class="result-card" *ngIf="unifiedResults.littlesis">
+        <div class="card-tag sanctions">PEP & Sanctions</div>
+        <h3>LittleSis Entities</h3>
+        <div class="entity-list">
+          <div class="entity-item" *ngFor="let ent of unifiedResults.littlesis.data">
+            <div class="entity-header">
+              <span class="entity-name">{{ ent.attributes.name }}</span>
+              <span class="entity-type">{{ ent.attributes.primary_ext }}</span>
+            </div>
+            <p class="entity-blurb">{{ ent.attributes.blurb }}</p>
+            <div class="entity-tags">
+              <span class="tag" *ngFor="let t of ent.attributes.types">{{ t }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="unifiedResults.littlesis.data.length === 0" class="no-results">Aucun résultat LittleSis.</div>
+      </div>
+
+      <!-- ETALAB / COMPANIES -->
+      <div class="result-card" *ngIf="unifiedResults.etalab">
+        <div class="card-tag companies">Registre Entreprises</div>
+        <h3>Résultats Etalab</h3>
+        <div class="entity-list">
+          <div class="entity-item" *ngFor="let comp of unifiedResults.etalab.results">
+            <div class="entity-header">
+              <span class="entity-name">{{ comp.nom_complet }}</span>
+              <span class="entity-siren">SIREN: {{ comp.siren }}</span>
+            </div>
+            <p class="entity-meta">{{ comp.nature_juridique_label || 'Entreprise' }} • {{ comp.etat_administratif === 'A' ? 'Active' : 'Inactive' }}</p>
+            <div class="dirigeants" *ngIf="comp.dirigeants?.length">
+              <strong>Dirigeants :</strong>
+              <span *ngFor="let d of comp.dirigeants">{{ d.prenoms }} {{ d.nom }} ({{ d.role }})</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="unifiedResults.etalab.results.length === 0" class="no-results">Aucune entreprise trouvée.</div>
+      </div>
+
+      <!-- INTERPOL -->
+      <div class="result-card" *ngIf="unifiedResults.interpol">
+        <div class="card-tag criminals">Criminal Monitoring</div>
+        <h3>Interpol Red Notices</h3>
+        <div class="interpol-results">
+          <div class="stat">{{ unifiedResults.interpol.total }} notices trouvées</div>
+          <div class="notice-item" *ngFor="let notice of unifiedResults.interpol._embedded?.notices">
+            <span>{{ notice.name }}, {{ notice.forename }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORLD BANK -->
+      <div class="result-card" *ngIf="unifiedResults.worldbank">
+        <div class="card-tag debarred">Debarred Lists</div>
+        <h3>World Bank Documents</h3>
+        <div class="wb-list">
+          <div class="wb-item" *ngFor="let doc of unifiedResults.worldbank.documents | keyvalue">
+            <div class="doc-title">{{ doc.value.display_title }}</div>
+            <div class="doc-meta">{{ doc.value.docdt | date }} • {{ doc.value.count }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLACEHOLDER / LOADING -->
+      <div class="loading-full" *ngIf="loading">
+        <div class="loader-circle"></div>
+        <p>Interrogation des bases de données mondiales...</p>
+      </div>
+
+      <div class="empty-state-full" *ngIf="!loading && !unifiedResults.littlesis && !unifiedResults.etalab">
+        <div class="icon">🔍</div>
+        <h2>En attente de recherche</h2>
+        <p>Entrez un nom ou un identifiant pour lancer l'audit de conformité.</p>
+      </div>
+
+    </section>
+
+    <!-- RAW JSON DRAWER (OPTIONAL) -->
+    <aside class="raw-data" [class.open]="showRaw">
+      <div class="raw-header" (click)="showRaw = !showRaw">
+        <span>Données Brutes (JSON)</span>
+        <button class="btn-toggle">{{ showRaw ? '−' : '+' }}</button>
+      </div>
+      <div class="raw-body" *ngIf="showRaw">
+        <pre>{{ unifiedResults | json }}</pre>
+      </div>
+    </aside>
+
+  </main>
+</div>

@@ -1,0 +1,1723 @@
+=== LCB-FT API DATA EXPORT LOG ===
+Generated at: 07/05/2026 15:33:44
+
+--- Testing Recherche Entreprises (Etalab) ---
+[INPUT URL]: https://recherche-entreprises.api.gouv.fr/search?q=google&per_page=1&minimal=True
+[INPUT OPTIONS]: {}
+[STATUS]: 200 (267ms)
+[OUTPUT]:
+{
+  "results": [
+    {
+      "siren": "443061841",
+      "nom_complet": "GOOGLE FRANCE",
+      "nom_raison_sociale": "GOOGLE FRANCE",
+      "sigle": null,
+      "nombre_etablissements": 15,
+      "nombre_etablissements_ouverts": 7,
+      "activite_principale": "62.02A",
+      "activite_principale_naf25": "62.20G",
+      "categorie_entreprise": "ETI",
+      "caractere_employeur": null,
+      "annee_categorie_entreprise": "2023",
+      "date_creation": "2002-05-16",
+      "date_fermeture": null,
+      "date_mise_a_jour": "2026-05-07T10:27:49",
+      "date_mise_a_jour_insee": "2025-12-06T05:16:18",
+      "date_mise_a_jour_rne": "2024-05-19T17:01:20",
+      "etat_administratif": "A",
+      "nature_juridique": "5499",
+      "section_activite_principale": "J",
+      "tranche_effectif_salarie": "42",
+      "annee_tranche_effectif_salarie": "2023",
+      "statut_diffusion": "O"
+    }
+  ],
+  "total_results": 27,
+  "page": 1,
+  "per_page": 1,
+  "total_pages": 27
+}
+
+==================================================
+--- Testing CSL (Global Sanctions) ---
+[INPUT URL]: https://api.trade.gov/gateway/v1/consolidated_screening_list/search?q=Putin
+[INPUT OPTIONS]: {"headers":{"Accept":"application/json"}}
+[STATUS]: 200 (603ms)
+[OUTPUT]:
+<!DOCTYPE html><html lang="en"><head><link rel="shortcut icon" href="/content/ita-favicon.png"><meta charset="utf-8"><meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"><link href="/styles/theme.css" rel="stylesheet" type="text/css"><script src="/scripts/theme.js" type="text/javascript"></script><title>Home - ITA's Data Services Platform</title><meta name="description" content="Discover APIs, learn how to use them, try them out interactively, and sign up to acquire keys."><meta name="keywords" content="API, Data Services Platform"><meta name="author" content="ITA's Data Services Platform"><link href="/styles/styles.css" rel="stylesheet" type="text/css"><script type="application/ld+json">{"@context":"http://www.schema.org","@type":"Organization","name":"ITA's Data Services Platform","description":"Discover APIs, learn how to use them, try them out interactively, and sign up to acquire keys."}</script><meta property="og:type" content="website"><meta property="og:site_name" content="ITA's Data Services Platform"><meta property="og:title" content="Home"><meta property="og:description" content="Discover APIs, learn how to use them, try them out interactively, and sign up to acquire keys."><meta property="og:url" content="/"><link href="/styles.css" rel="stylesheet" type="text/css"></head><body class="block"><div class="flex flex-column flex-grow fill"><div class="popup-host"></div><section class="fcltwbsssn" access-id="f80bb7e9-2fd6-ec29-9633-49ef15dd5d42"><div class="wloypyxmni"><div class="ntiozfjpwu" role="main"><div class="flex flex-column flex-grow fill block"><section class="xbhdugxuzj xbhdugxuzj-sm xbhdugxuzj-md xbhdugxuzj-lg xbhdugxuzj-xl" access-id="66de442d-a36a-2341-ab72-0e75eb04eddc"><div class="rddxkifini rddxkifini-md rddxkifini-xl rddxkifini-sm rddxkifini-lg"><div class="pqfxyznnpw pqfxyznnpw-xl pqfxyznnpw-md" role="article"><div class="ProseMirror"><h1 id="gdT4L">Welcome to ITA's Data Services Platform</h1></div><div class="... (truncated if long)
+
+==================================================
+--- Testing World Bank (Debarred) ---
+[INPUT URL]: https://search.worldbank.org/api/v3/wds?qterm=debarred+firms&format=json
+[INPUT OPTIONS]: {}
+[STATUS]: 200 (408ms)
+[OUTPUT]:
+{
+  "rows": 10,
+  "os": 0,
+  "page": 1,
+  "total": 136,
+  "documents": {
+    "D33751298": {
+      "id": "33751298",
+      "admreg": "East Asia and Pacific",
+      "count": "Philippines",
+      "docna": {
+        "0": {
+          "docna": "Announcement of World Bank Debars Seven Firms and One Individual for Collusive Practices under Philippines Roads Project on January 14, 2009"
+        }
+      },
+      "docty": "Announcement",
+      "owner": "Office of the Vice President (ECRVP)",
+      "seccl": "Public",
+      "lang": "English",
+      "entityids": {
+        "entityid": "090224b088d15793_1_0"
+      },
+      "subtopic": "Crime and Society,Financial Sector Policy,Government Policies,Inter-Urban Roads and Passenger Transport,Judicial System Reform,Labor Markets,Labor Policies,Legal Products,Legal Reform,Legislation,National Governance,Public Finance Decentralization and Poverty Reduction,Public Sector Economics,Regulatory Regimes,Roads & Highways,Roads and Highways Performance,Rural Labor Markets,Social Policy,Youth and Governance",
+      "teratopic": "Governance,Law and Development,Public Sector Development,Rural Development,Social Development,Social Protections and Labor,Transport",
+      "repnb": "169193",
+      "docdt": "2009-01-14T05:00:00Z",
+      "datestored": "2022-03-07T05:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "Public and Private Institution"
+        },
+        "1": {
+          "keywd": " kilometers of road"
+        },
+        "2": {
+          "keywd": " allegations of fraud"
+        },
+        "3": {
+          "keywd": " civil society group"
+        },
+        "4": {
+          "keywd": " collusive practice"
+        },
+        "5": {
+          "keywd": " administrative sanction"
+        },
+        "6": {
+          "keywd": " temporary suspension"
+        },
+        "7": {
+          "keywd": " road sector"
+        },
+        "8": {
+          "keywd": " legal expert"
+        },
+        "9": {
+          "keywd": " bid price"
+        },
+        "10": {
+          "keywd": " open competition"
+        },
+        "11": {
+          "keywd": " fraudulent practice"
+        },
+        "12": {
+          "keywd": " applicable procurement"
+        },
+        "13": {
+          "keywd": " corruption case"
+        },
+        "14": {
+          "keywd": " public money"
+        },
+        "15": {
+          "keywd": " public confidence"
+        },
+        "16": {
+          "keywd": " internal control"
+        },
+        "17": {
+          "keywd": " procurement process"
+        },
+        "18": {
+          "keywd": " major bank"
+        },
+        "19": {
+          "keywd": " Investigation"
+        }
+      },
+      "volnb": "1",
+      "geo_regions": {
+        "0": {
+          "geo_region": "Asia"
+        },
+        "1": {
+          "geo_region": "Southeast Asia"
+        },
+        "2": {
+          "geo_region": "World"
+        }
+      },
+      "majdocty": "Publications & Research",
+      "abstracts": {
+        "cdata!": "This press release announces that the World Bank declared on January 14, 2009, the debarment of seven firms and one individual for engaging in collusive practices under a major Bank-financed roads project in the Philippines."
+      },
+      "colti": "Bank News Release",
+      "repnme": {
+        "repnme": "Announcement of World Bank Debars Seven Firms and One Individual for Collusive Practices under Philippines Roads Project on January 14, 2009"
+      },
+      "display_title": "Announcement of World Bank Debars Seven Firms and One Individual for Collusive Practices under Philippines Roads Project on January 14, 2009",
+      "disclosure_date": "2022-03-07T10:47:02Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/504811646650151273/pdf/Announcement-of-World-Bank-Debars-Seven-Firms-and-One-Individual-for-Collusive-Practices-under-Philippines-Roads-Project-on-January-14-2009.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/504811646650151273/text/Announcement-of-World-Bank-Debars-Seven-Firms-and-One-Individual-for-Collusive-Practices-under-Philippines-Roads-Project-on-January-14-2009.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b088d15793",
+      "totvolnb": "1",
+      "versiontyp": "Final",
+      "historic_topic": "Governance,Law and Development,Public Sector Development,Rural Development,Social Development,Social Protections and Labor,Transport",
+      "guid": "504811646650151273",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/504811646650151273"
+    },
+    "D33872382": {
+      "id": "33872382",
+      "admreg": "Other",
+      "authors": {
+        "0": {
+          "author": "World Bank"
+        }
+      },
+      "count": "World",
+      "docna": {
+        "0": {
+          "docna": "Announcement of World Bank Debars Two Firms Under India Reproductive and Child Health Project on July 16, 2007"
+        }
+      },
+      "docty": "Announcement",
+      "owner": "Office of the Vice President (ECRVP)",
+      "seccl": "Public",
+      "lang": "English",
+      "repnb": "174343",
+      "docdt": "2007-07-15T04:00:00Z",
+      "datestored": "2022-07-25T07:40:14Z",
+      "volnb": "1",
+      "majdocty": "Publications & Research",
+      "abstracts": {
+        "cdata!": "On July 16, 2007, the World Bank has declared two India-based firms, Nestor Pharmaceuticals Ltd. (Nestor) and Pure Pharma Ltd. (Pure Pharma), ineligible to be awarded Bank-financed contracts. Both firms were found to have engaged in collusive practices in connection with the Bank financed Reproductive and Child Health Project (RCH I) in India. Nestor has been debarred for a period of three years, while Pure Pharma is debarred forone year."
+      },
+      "colti": "Bank News Release",
+      "display_title": "Announcement of World Bank Debars Two Firms Under India Reproductive and Child Health Project on July 16, 2007",
+      "disclosure_date": "2022-07-25T03:38:17Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/099340107252210034/pdf/IDU009b5f2ef0c371040ea0b3c300f659f09b807.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/099340107252210034/text/IDU009b5f2ef0c371040ea0b3c300f659f09b807.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "IDU-09b5f2ef-c371-40ea-b3c3-0f659f09b807",
+      "versiontyp": "Final",
+      "guid": "099340107252210034",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/099340107252210034"
+    },
+    "D12412770": {
+      "id": "12412770",
+      "admreg": "Other",
+      "count": "World",
+      "docna": {
+        "0": {
+          "docna": "The World Bank Group : mutual enforcement of debarment decisions among multilateral development banks"
+        }
+      },
+      "docty": "Board Report",
+      "owner": "Policy and Operations (SECPO)",
+      "seccl": "Public",
+      "lang": "English",
+      "entityids": {
+        "entityid": "000333038_20100614000033"
+      },
+      "subtopic": "Crime and Society,Government Policies,International Law,Judicial System Reform,Legal Institutions of the Market Economy,Legal Products,Legal Reform,Legislation,National Governance,Public Finance Decentralization and Poverty Reduction,Public Sector Economics,Regulatory Regimes,Social Policy,Treaties,Youth and Governance",
+      "teratopic": "Conflict and Development,Finance and Financial Sector Development,Gender,Law and Development,Public Sector Development",
+      "repnb": "55000",
+      "docdt": "2010-03-03T05:00:00Z",
+      "datestored": "2010-06-14T04:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "Sanctionable Practices"
+        },
+        "1": {
+          "keywd": "allegations of fraud"
+        },
+        "2": {
+          "keywd": "Legal Vice Presidency"
+        },
+        "3": {
+          "keywd": "international financial institution"
+        },
+        "4": {
+          "keywd": "principle of proportionality"
+        },
+        "5": {
+          "keywd": "notification of award"
+        },
+        "6": {
+          "keywd": "statute of limitation"
+        },
+        "7": {
+          "keywd": "privileges and immunity"
+        },
+        "8": {
+          "keywd": "effect of sanction"
+        },
+        "9": {
+          "keywd": "form of punishment"
+        },
+        "10": {
+          "keywd": "Sanction System"
+        },
+        "11": {
+          "keywd": "Investigation"
+        },
+        "12": {
+          "keywd": "reputational risk"
+        },
+        "13": {
+          "keywd": "written notice"
+        },
+        "14": {
+          "keywd": "automatic recognition"
+        },
+        "15": {
+          "keywd": "communication strategy"
+        },
+        "16": {
+          "keywd": "Effective Date"
+        },
+        "17": {
+          "keywd": "enforcement action"
+        },
+        "18": {
+          "keywd": "mutual recognition"
+        },
+        "19": {
+          "keywd": "business community"
+        },
+        "20": {
+          "keywd": "Obstructive Practice"
+        },
+        "21": {
+          "keywd": "harmonized definitions"
+        },
+        "22": {
+          "keywd": "joint investigations"
+        },
+        "23": {
+          "keywd": "fiduciary duty"
+        },
+        "24": {
+          "keywd": "corruption"
+        },
+        "25": {
+          "keywd": "criminal liability"
+        },
+        "26": {
+          "keywd": "primary concern"
+        },
+        "27": {
+          "keywd": "positive outcome"
+        },
+        "28": {
+          "keywd": "independent oversight"
+        },
+        "29": {
+          "keywd": "working relationship"
+        },
+        "30": {
+          "keywd": "internal policies"
+        },
+        "31": {
+          "keywd": "extensive use"
+        },
+        "32": {
+          "keywd": "fight corruption"
+        },
+        "33": {
+          "keywd": "corrupt behavior"
+        },
+        "34": {
+          "keywd": "existing contract"
+        },
+        "35": {
+          "keywd": "national authority"
+        },
+        "36": {
+          "keywd": "draft protocol"
+        },
+        "37": {
+          "keywd": "development mission"
+        },
+        "38": {
+          "keywd": "amendment letter"
+        },
+        "39": {
+          "keywd": "annex annex"
+        },
+        "40": {
+          "keywd": "notification requirement"
+        },
+        "41": {
+          "keywd": "independent authority"
+        },
+        "42": {
+          "keywd": "fiduciary risk"
+        },
+        "43": {
+          "keywd": "common denominator"
+        },
+        "44": {
+          "keywd": "exceptional circumstance"
+        },
+        "45": {
+          "keywd": "safe harbor"
+        },
+        "46": {
+          "keywd": "administrative budget"
+        },
+        "47": {
+          "keywd": "institutional integrity"
+        },
+        "48": {
+          "keywd": "safeguarding development"
+        },
+        "49": {
+          "keywd": "court claim"
+        },
+        "50": {
+          "keywd": "judicial process"
+        },
+        "51": {
+          "keywd": "increased risks"
+        },
+        "52": {
+          "keywd": "legal claim"
+        },
+        "53": {
+          "keywd": "increased transparency"
+        },
+        "54": {
+          "keywd": ""
+        }
+      },
+      "volnb": "1",
+      "majdocty": "Board Documents",
+      "abstracts": {
+        "cdata!": "This paper sets forth Management's proposal to establish a cross-debarment regime, whereby firms and individuals debarred by one Multilateral Development Bank (MDB) may be sanctioned, for the same misconduct, by other MDBs participating in the regime. The paper is organized according to the following Sections: (i) background; (ii) rationale for establishing a cross-debarment regime; (iii) associated risks; (iv) the Cross- Debarment Agreement; and (v) recommendations and next steps."
+      },
+      "repnme": {
+        "repnme": "The World Bank Group : mutual enforcement of debarment decisions among multilateral development banks"
+      },
+      "display_title": "The World Bank Group : mutual enforcement of debarment decisions among multilateral development banks",
+      "disclosure_date": "2010-08-20T04:00:00Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/930221468337472036/pdf/550000BR0SecM2101Official0Use0Only1.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/930221468337472036/text/550000BR0SecM2101Official0Use0Only1.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b0828d117d",
+      "totvolnb": "1",
+      "versiontyp": "Final",
+      "historic_topic": "Conflict and Development,Finance and Financial Sector Development,Gender,Law and Development,Public Sector Development",
+      "guid": "930221468337472036",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/930221468337472036"
+    },
+    "D4955423": {
+      "id": "4955423",
+      "admreg": "Other",
+      "count": "World",
+      "docna": {
+        "0": {
+          "docna": "Report concerning the debarment processes of the World Bank"
+        }
+      },
+      "docty": "Board Report",
+      "owner": "Board Operations (SECBO)",
+      "seccl": "Public",
+      "lang": "English",
+      "entityids": {
+        "entityid": "000012009_20040720152713"
+      },
+      "subtopic": "Crime and Society,Educational Sciences,Government Policies,Judicial System Reform,Labor Markets,Labor Standards,Law Enforcement Systems,Legal Products,Legal Reform,Legislation,National Governance,Public Finance Decentralization and Poverty Reduction,Public Sector Economics,Regulatory Regimes,Rural Labor Markets,Social Policy,Youth and Governance",
+      "teratopic": "Conflict and Development,Law and Development,Private Sector Development,Public Sector Development",
+      "repnb": "29691",
+      "docdt": "2002-08-14T04:00:00Z",
+      "datestored": "2004-07-20T04:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "European Bank for Reconstruction and Development"
+        },
+        "1": {
+          "keywd": "Debarred Firms and Individuals"
+        },
+        "2": {
+          "keywd": "access to bank"
+        },
+        "3": {
+          "keywd": "corruption"
+        },
+        "4": {
+          "keywd": "conflicts of interest"
+        },
+        "5": {
+          "keywd": "national government agency"
+        },
+        "6": {
+          "keywd": "internal auditing department"
+        },
+        "7": {
+          "keywd": "abuse of discretion"
+        },
+        "8": {
+          "keywd": "international development bank"
+        },
+        "9": {
+          "keywd": "recovery of loss"
+        },
+        "10": {
+          "keywd": "law enforcement authority"
+        },
+        "11": {
+          "keywd": "burden of proof"
+        },
+        "12": {
+          "keywd": "misuse of fund"
+        },
+        "13": {
+          "keywd": "documentary evidence"
+        },
+        "14": {
+          "keywd": "staff support"
+        },
+        "15": {
+          "keywd": "national economy"
+        },
+        "16": {
+          "keywd": "future contract"
+        },
+        "17": {
+          "keywd": "public official"
+        },
+        "18": {
+          "keywd": "case file"
+        },
+        "19": {
+          "keywd": "informal practice"
+        },
+        "20": {
+          "keywd": "corrupt activity"
+        },
+        "21": {
+          "keywd": "external pressure"
+        },
+        "22": {
+          "keywd": "governmental agency"
+        },
+        "23": {
+          "keywd": "preventive action"
+        },
+        "24": {
+          "keywd": "procurement practice"
+        },
+        "25": {
+          "keywd": "future bank"
+        },
+        "26": {
+          "keywd": "legal counsel"
+        },
+        "27": {
+          "keywd": "legal standard"
+        },
+        "28": {
+          "keywd": "legal aspect"
+        },
+        "29": {
+          "keywd": "professional capacity"
+        },
+        "30": {
+          "keywd": "standing committee"
+        },
+        "31": {
+          "keywd": "ethical concern"
+        },
+        "32": {
+          "keywd": "procurement process"
+        },
+        "33": {
+          "keywd": "administrative nature"
+        },
+        "34": {
+          "keywd": "informal exchange"
+        },
+        "35": {
+          "keywd": "legal training"
+        },
+        "36": {
+          "keywd": "public announcement"
+        },
+        "37": {
+          "keywd": "procedural fairness"
+        },
+        "38": {
+          "keywd": "working day"
+        },
+        "39": {
+          "keywd": "majority vote"
+        },
+        "40": {
+          "keywd": "regular structure"
+        },
+        "41": {
+          "keywd": "legal procedure"
+        },
+        "42": {
+          "keywd": "legal advice"
+        },
+        "43": {
+          "keywd": "administrative support"
+        },
+        "44": {
+          "keywd": "written statement"
+        },
+        "45": {
+          "keywd": "Borrowing Countries"
+        },
+        "46": {
+          "keywd": "temporary suspension"
+        },
+        "47": {
+          "keywd": "civil suit"
+        },
+        "48": {
+          "keywd": "consumer protection"
+        },
+        "49": {
+          "keywd": "organizational structure"
+        },
+        "50": {
+          "keywd": "employee education"
+        },
+        "51": {
+          "keywd": "consulting contract"
+        },
+        "52": {
+          "keywd": "subject area"
+        },
+        "53": {
+          "keywd": "criminal conduct"
+        },
+        "54": {
+          "keywd": "corruption case"
+        },
+        "55": {
+          "keywd": "domestic corporation"
+        },
+        "56": {
+          "keywd": "dramatic change"
+        },
+        "57": {
+          "keywd": "political official"
+        },
+        "58": {
+          "keywd": "written comment"
+        },
+        "59": {
+          "keywd": "long-term effect"
+        },
+        "60": {
+          "keywd": "bank official"
+        },
+        "61": {
+          "keywd": "specific issue"
+        },
+        "62": {
+          "keywd": "criminal proceeding"
+        },
+        "63": {
+          "keywd": "civil action"
+        },
+        "64": {
+          "keywd": "economic health"
+        },
+        "65": {
+          "keywd": "simple procedure"
+        },
+        "66": {
+          "keywd": "general counsel"
+        },
+        "67": {
+          "keywd": "criminal case"
+        },
+        "68": {
+          "keywd": "agency regulation"
+        },
+        "69": {
+          "keywd": "protective effect"
+        },
+        "70": {
+          "keywd": "summary process"
+        },
+        "71": {
+          "keywd": "procurement review"
+        },
+        "72": {
+          "keywd": "criminal law"
+        },
+        "73": {
+          "keywd": "inter governmental organization"
+        },
+        "74": {
+          "keywd": "criminal prosecution"
+        },
+        "75": {
+          "keywd": "domestic jurisdiction"
+        },
+        "76": {
+          "keywd": "oversight committee"
+        },
+        "77": {
+          "keywd": "executive agency"
+        },
+        "78": {
+          "keywd": ""
+        }
+      },
+      "volnb": "1",
+      "majdocty": "Board Documents",
+      "abstracts": {
+        "cdata!": "The Report is intended to provide an encapsulated review of the experience - and the possible future course - of the Bank in attempting to identify, and sanction, through the process of debarment, organizations and individuals believed to have engaged in fraudulent, or corrupt activities in relation to Bank-financed, and Bank-executed projects. Following an introduction to the general use of debarment in the context of the Bank's needs and responsibilities, the Report notes the long period during which the matter was addressed by the Bank, if at all, only informally at the regional level, rather than at headquarters level; the gradual awakening of the Bank to the seriousness of the problem; and, the early, informal responses of the Legal Department. It proceeds to review the practices authorized under the January 1998 Operational Memorandum establishing a Sanctions Committee; the evolution of the associated investigative processes; and, the current practices under the clarified procedures adopted in August 2001. The report then discusses the various issues relevant to developing these processes, and, proffers recommendations that should be considered in the course of a fresh assessment of the more significant of those issues, and of several of the lesser issues presented. It concludes with a caution to keep the Bank's overall mission in mind in the process of evaluating potential changes. Also surveyed are the analogous practices of selected governmental, and intergovernmental organizations. The structure that the Bank has imposed upon the process, is designed to go further than necessary, in order to demonstrate an exemplary degree of fairness, and regularity. Proposed changes in the process should be adopted only after a careful assessment, and after a conclusion by the Bank that they will serve as improvements, not detriments, to the implementation of an effective and efficient process that enables the Bank to meet its principal responsibilities, and goals. Of the changes that do appear warranted, by far the most significant is that involving a restructuring and repositioning of the sanction-determining body. Once a decision on that subject is reached by the Bank, some other adjustments may well be in order."
+      },
+      "repnme": {
+        "repnme": "Report concerning the debarment processes of the World Bank"
+      },
+      "display_title": "Report concerning the debarment processes of the World Bank",
+      "disclosure_date": "2010-07-01T04:00:00Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/703091468142187708/pdf/29691.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/703091468142187708/text/29691.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b0828a58a1",
+      "totvolnb": "1",
+      "versiontyp": "Revised",
+      "historic_topic": "Conflict and Development,Law and Development,Private Sector Development,Public Sector Development",
+      "guid": "703091468142187708",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/703091468142187708"
+    },
+    "D33875678": {
+      "id": "33875678",
+      "admreg": "Europe and Central Asia",
+      "authors": {
+        "0": {
+          "author": "World Bank"
+        }
+      },
+      "count": "Russian Federation",
+      "docna": {
+        "0": {
+          "docna": "Announcement of World Bank Debars Firm, Individual For Fraudulent Practices Under Russian Federation Community Social Infrastructure Project on March 30, 2006"
+        }
+      },
+      "docty": "Announcement",
+      "owner": "Office of the Vice President (ECRVP)",
+      "seccl": "Public",
+      "lang": "English",
+      "repnb": "174631",
+      "docdt": "2006-03-29T05:00:00Z",
+      "datestored": "2022-08-01T11:59:39Z",
+      "volnb": "1",
+      "majdocty": "Publications & Research",
+      "abstracts": {
+        "cdata!": "On March 30, 2006, the World Bank today announced that it has debarred Universal Technology Systems (UTS), a company registered in Delaware, U.S.A.; and Mr. Andrei V. Kozhin, a Russian national and owner of the firm, for fraudulent practices in relation to a World Bank-financedproject in the Russian Federation."
+      },
+      "colti": "Bank News Release",
+      "display_title": "Announcement of World Bank Debars Firm, Individual For Fraudulent Practices Under Russian Federation Community Social Infrastructure Project on March 30, 2006",
+      "disclosure_date": "2022-08-01T07:57:41Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/099759308012222756/pdf/IDU0c8d702c901f84042a90a58a0d4ebcddbbf75.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/099759308012222756/text/IDU0c8d702c901f84042a90a58a0d4ebcddbbf75.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "IDU-c8d702c9-1f84-42a9-a58a-d4ebcddbbf75",
+      "versiontyp": "Final",
+      "guid": "099759308012222756",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/099759308012222756"
+    },
+    "D33696860": {
+      "id": "33696860",
+      "admreg": "Other",
+      "count": "World",
+      "docna": {
+        "0": {
+          "docna": "Announcement of Statement by World Bank Group Discloses Debarments under Corporate Procurement Program on January 11, 2009"
+        }
+      },
+      "docty": "Announcement",
+      "owner": "Office of the Vice President (ECRVP)",
+      "seccl": "Public",
+      "lang": "English",
+      "entityids": {
+        "entityid": "090224b088c63260_1_0"
+      },
+      "subtopic": "Financial Sector Policy",
+      "repnb": "167531",
+      "docdt": "2009-01-11T05:00:00Z",
+      "datestored": "2022-01-04T05:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "corporate procurement"
+        },
+        "1": {
+          "keywd": " conducting business"
+        },
+        "2": {
+          "keywd": " Ineligible Firms"
+        }
+      },
+      "volnb": "1",
+      "majdocty": "Publications & Research",
+      "abstracts": {
+        "cdata!": "This press release announces that the World Bank Group has decided to make public the names of all companies that have been debarred from receiving direct contracts from the Bank Group under its corporate procurement program on January 11, 2009. This change was made in the interest of fairness and transparency."
+      },
+      "colti": "Bank News Release",
+      "repnme": {
+        "repnme": "Announcement of Statement by World Bank Group Discloses Debarments under Corporate Procurement Program on January 11, 2009"
+      },
+      "display_title": "Announcement of Statement by World Bank Group Discloses Debarments under Corporate Procurement Program on January 11, 2009",
+      "disclosure_date": "2022-01-04T08:49:40Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/589611641286293233/pdf/Announcement-of-Statement-by-World-Bank-Group-Discloses-Debarments-under-Corporate-Procurement-Program-on-January-11-2009.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/589611641286293233/text/Announcement-of-Statement-by-World-Bank-Group-Discloses-Debarments-under-Corporate-Procurement-Program-on-January-11-2009.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b088c63260",
+      "totvolnb": "1",
+      "versiontyp": "Final",
+      "guid": "589611641286293233",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/589611641286293233"
+    },
+    "D33751309": {
+      "id": "33751309",
+      "admreg": "Europe and Central Asia",
+      "count": "Ukraine",
+      "docna": {
+        "0": {
+          "docna": "Announcement of World Bank Debars Four for Engaging in Fraud in Bank-Financed Projects on June 2, 2009"
+        }
+      },
+      "docty": "Announcement",
+      "owner": "Office of the Vice President (ECRVP)",
+      "seccl": "Public",
+      "lang": "English",
+      "entityids": {
+        "entityid": "090224b088d15dc4_1_0"
+      },
+      "subtopic": "Crime and Society,Financial Sector Policy,Government Policies,Hydrology,Judicial System Reform,Legal Products,Legal Reform,Legislation,Macroeconomic Management,National Governance,Public Finance Decentralization and Poverty Reduction,Public Sector Economics,Regulatory Regimes,Social Policy,Youth and Governance",
+      "teratopic": "Governance,Law and Development,Macroeconomics and Economic Growth,Public Sector Development,Social Development,Water Resources",
+      "repnb": "169195",
+      "docdt": "2009-06-02T04:00:00Z",
+      "datestored": "2022-03-07T05:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "Investigation"
+        },
+        "1": {
+          "keywd": " corruption"
+        },
+        "2": {
+          "keywd": " number of sanctions"
+        },
+        "3": {
+          "keywd": " effective compliance"
+        },
+        "4": {
+          "keywd": " corporate compliance"
+        },
+        "5": {
+          "keywd": " construction equipment"
+        },
+        "6": {
+          "keywd": " adjustment loan"
+        },
+        "7": {
+          "keywd": " non-governmental organization"
+        },
+        "8": {
+          "keywd": " economic crisis"
+        }
+      },
+      "volnb": "1",
+      "geo_regions": {
+        "0": {
+          "geo_region": "Commonwealth of Independent States"
+        },
+        "1": {
+          "geo_region": "South Eastern Europe and Balkans"
+        },
+        "2": {
+          "geo_region": "World"
+        }
+      },
+      "majdocty": "Publications & Research",
+      "abstracts": {
+        "cdata!": "This press release announces that the World Bank declared that it has debarred a Ukrainian non-governmental organization, a Turkish firm and two individuals for having engaged in fraud in relation to World Bank-financed projects on June 2, 2009. The debarments, which resulted from investigations by the World Bank’s Integrity Vice Presidency (INT), are part of the Bank’s broader anti-corruption agenda."
+      },
+      "colti": "Bank News Release",
+      "repnme": {
+        "repnme": "Announcement of World Bank Debars Four for Engaging in Fraud in Bank-Financed Projects on June 2, 2009"
+      },
+      "display_title": "Announcement of World Bank Debars Four for Engaging in Fraud in Bank-Financed Projects on June 2, 2009",
+      "disclosure_date": "2022-03-07T11:05:10Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/542891646651225983/pdf/Announcement-of-World-Bank-Debars-Four-for-Engaging-in-Fraud-in-Bank-Financed-Projects-on-June-2-2009.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/542891646651225983/text/Announcement-of-World-Bank-Debars-Four-for-Engaging-in-Fraud-in-Bank-Financed-Projects-on-June-2-2009.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b088d15dc4",
+      "totvolnb": "1",
+      "versiontyp": "Final",
+      "historic_topic": "Governance,Law and Development,Macroeconomics and Economic Growth,Public Sector Development,Social Development,Water Resources",
+      "guid": "542891646651225983",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/542891646651225983"
+    },
+    "D16732296": {
+      "id": "16732296",
+      "admreg": "Eastern and Southern Africa",
+      "count": "Lesotho",
+      "docna": {
+        "0": {
+          "docna": "Lesotho - Restructuring of the Integrated Transport Project : summary of discussion"
+        }
+      },
+      "docty": "Board Summary",
+      "owner": "Transport Practice Group (AFTTR)",
+      "projn": "LS-Lesotho Integrated Transport Project -- P075566",
+      "subsc": "FY17 - Other Transportation,FY17 - Rural and Inter-Urban Roads,FY17 - Sub-National Government,FY17 - Law and Justice,FY17 - Central Government (Central Agencies)",
+      "trustfund": "TF090728 - LESOTHO INTEGRATED TRANSPORT PROJECT",
+      "theme": "FY17 - Job Creation,FY17 - Administrative and Civil Service Reform,FY17 - Housing Finance,FY17 - Trade Facilitation,FY17 - Finance for Development,FY17 - Public Administration,FY17 - Rural Development,FY17 - Trade,FY17 - Urban Development,FY17 - Urban Infrastructure and Service Delivery,FY17 - Jobs,FY17 - Rural Infrastructure and service delivery,FY17 - Urban Planning",
+      "prdln": "IBRD/IDA",
+      "seccl": "Public",
+      "lang": "English",
+      "lndinstr": {
+        "0": {
+          "lndinstr": "Investment Project Financing"
+        }
+      },
+      "lndinstr_exact": "Investment Project Financing",
+      "entityids": {
+        "entityid": "000333038_20120914012626"
+      },
+      "majtheme": "FY17 - Private Sector Development,FY17 - Public Sector Management,FY17 - Urban and Rural Development,FY17 - Economic Policy,FY17 - Finance",
+      "subtopic": "Transport Services",
+      "teratopic": "Finance and Financial Sector Development,Rural Development,Transport",
+      "sectr": {
+        "0": {
+          "sector": "Transportation"
+        },
+        "1": {
+          "sector": "Public Administration"
+        }
+      },
+      "repnb": "72465",
+      "docdt": "2012-09-11T04:00:00Z",
+      "datestored": "2012-09-14T04:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "loan accounting"
+        },
+        "1": {
+          "keywd": "payment term"
+        },
+        "2": {
+          "keywd": "internal monitoring"
+        },
+        "3": {
+          "keywd": "Debarred Firms"
+        },
+        "4": {
+          "keywd": "internal control"
+        },
+        "5": {
+          "keywd": "corporate culture"
+        },
+        "6": {
+          "keywd": ""
+        }
+      },
+      "volnb": "1",
+      "geo_regions": {
+        "0": {
+          "geo_region": "Southern Africa"
+        },
+        "1": {
+          "geo_region": "Sub-Saharan Africa"
+        },
+        "2": {
+          "geo_region": "World"
+        }
+      },
+      "majdocty": "Board Documents",
+      "abstracts": {
+        "cdata!": "Executive Directors approved the restructuring of the Lesotho Integrated Transport Project and additional financing on the payment terms and conditions set out in the President's Memorandum extending the project closing date retroactively until June 30, 2014. Directors highlighted the importance of continued support of this project for Lesotho. They expressed concerns over the association of the project with a debarred contractor and over the timeliness and appropriateness of informing the Board. In this regard, Directors acknowledged the importance of the progress achieved in the Bank since then in mainstreaming and operationalizing the debarment policies and encouraged further efforts in this respect. They also noted management's recent actions to enhance the Bank's internal monitoring by linking the Bank's loan accounting systems to the list of debarred firms. Directors also underscored the importance of sound internal controls and accountability issues and urged Management to review this case, to learn its lessons and further improve the relevant systems and corporate culture. Finally, they stressed the importance of continued monitoring of results and impact of the project."
+      },
+      "repnme": {
+        "repnme": "Lesotho - Restructuring of the Integrated Transport Project : summary of discussion"
+      },
+      "display_title": "Lesotho - Restructuring of the Integrated Transport Project : summary of discussion",
+      "disclosure_date": "2012-09-24T04:00:00Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/872981468263673628/pdf/724650SD0P07550Official0Use0Only090.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/872981468263673628/text/724650SD0P07550Official0Use0Only090.txt",
+      "EnvironmentalCategory": "B",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b0828c2f44",
+      "totvolnb": "1",
+      "versiontyp": "Final",
+      "historic_topic": "Finance and Financial Sector Development,Rural Development,Transport",
+      "projectid": "P075566",
+      "guid": "872981468263673628",
+      "prdln_exact": "IBRD/IDA",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/872981468263673628"
+    },
+    "D33471894": {
+      "id": "33471894",
+      "admreg": "Western and Central Africa",
+      "count": "Senegal",
+      "docna": {
+        "0": {
+          "docna": "Announcement of World Bank Sanctions Firm and Its Owner for Fraudulent Practices under Bank-Financed Projects in Senegal on June 11, 2008"
+        }
+      },
+      "docty": "Announcement",
+      "owner": "Office of the Vice President (ECRVP)",
+      "seccl": "Public",
+      "lang": "English",
+      "entityids": {
+        "entityid": "090224b088a4995d_2_0"
+      },
+      "subtopic": "City to City Alliances,Crime and Society,Financial Sector Policy,Government Policies,Judicial System Reform,Labor Markets,Labor Policies,Legal Products,Legal Reform,Legislation,National Governance,National Urban Development Policies & Strategies,Public Finance Decentralization and Poverty Reduction,Public Sector Economics,Regional Urban Development,Regulatory Regimes,Rural Labor Markets,Social Policy,Urban Communities,Urban Economic Development,Urban Economics,Youth and Governance",
+      "teratopic": "Communities and Human Settlements,Governance,Law and Development,Public Sector Development,Rural Development,Social Development,Social Protections and Labor,Urban Development",
+      "repnb": "164887",
+      "docdt": "2008-06-11T04:00:00Z",
+      "datestored": "2021-10-07T04:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "Investigation"
+        },
+        "1": {
+          "keywd": " allegations of fraud"
+        },
+        "2": {
+          "keywd": " public works agency"
+        },
+        "3": {
+          "keywd": " efficiency and quality"
+        },
+        "4": {
+          "keywd": " Advance Payment Guarantee"
+        },
+        "5": {
+          "keywd": " award of contract"
+        },
+        "6": {
+          "keywd": " future bank"
+        },
+        "7": {
+          "keywd": " fraudulent practice"
+        },
+        "8": {
+          "keywd": " metropolitan area"
+        },
+        "9": {
+          "keywd": " urban mobility"
+        },
+        "10": {
+          "keywd": " bid security"
+        },
+        "11": {
+          "keywd": " basic infrastructure"
+        },
+        "12": {
+          "keywd": " corporate compliance"
+        },
+        "13": {
+          "keywd": " transparent competition"
+        },
+        "14": {
+          "keywd": " financial resource"
+        },
+        "15": {
+          "keywd": " administrative hearing"
+        },
+        "16": {
+          "keywd": " corruption"
+        }
+      },
+      "volnb": "1",
+      "geo_regions": {
+        "0": {
+          "geo_region": "Sahel"
+        },
+        "1": {
+          "geo_region": "Sub-Saharan Africa"
+        },
+        "2": {
+          "geo_region": "WESTERN AND CENTRAL AFRICA"
+        },
+        "3": {
+          "geo_region": "World"
+        }
+      },
+      "majdocty": "Publications & Research",
+      "abstracts": {
+        "cdata!": "This press release announces that the World Bank declared that it has debarred Générale de l’Ingénierie des Travaux et de l’Equipement (GENITE), a firm based in Senegal, and Mr. Aliou Niang, a Senegalese national and sole owner of GENITE, for fraudulent practices by GENITE in relation to two Bank-financed projects in Senegal on June 11, 2008."
+      },
+      "colti": "Bank News Release",
+      "repnme": {
+        "repnme": "Announcement of World Bank Sanctions Firm and Its Owner for Fraudulent Practices under Bank-Financed Projects in Senegal on June 11, 2008"
+      },
+      "display_title": "Announcement of World Bank Sanctions Firm and Its Owner for Fraudulent Practices under Bank-Financed Projects in Senegal on June 11, 2008",
+      "disclosure_date": "2021-10-07T09:23:01Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/455741633599056635/pdf/Announcement-of-World-Bank-Sanctions-Firm-and-Its-Owner-for-Fraudulent-Practices-under-Bank-Financed-Projects-in-Senegal-on-June-11-2008.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/455741633599056635/text/Announcement-of-World-Bank-Sanctions-Firm-and-Its-Owner-for-Fraudulent-Practices-under-Bank-Financed-Projects-in-Senegal-on-June-11-2008.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b088a492e2",
+      "totvolnb": "1",
+      "versiontyp": "Final",
+      "historic_topic": "Communities and Human Settlements,Governance,Law and Development,Public Sector Development,Rural Development,Social Development,Social Protections and Labor,Urban Development",
+      "guid": "455741633599056635",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/455741633599056635"
+    },
+    "D33471908": {
+      "id": "33471908",
+      "admreg": "East Asia and Pacific",
+      "count": "Philippines",
+      "docna": {
+        "0": {
+          "docna": "Announcement of World Bank Sanctions Firm for Helping Rig Bids in One Hundred Fifty Million US Dollars Bank-Financed Philippines Road Project on August 22, 2008"
+        }
+      },
+      "docty": "Announcement",
+      "owner": "Office of the Vice President (ECRVP)",
+      "seccl": "Public",
+      "lang": "English",
+      "entityids": {
+        "entityid": "090224b088a49971_1_0"
+      },
+      "subtopic": "Competition Policy,Competitiveness and Competition Policy,Crime and Society,Financial Sector Policy,Government Policies,Judicial System Reform,Legal Products,Legal Reform,Legislation,National Governance,Public Finance Decentralization and Poverty Reduction,Public Sector Economics,Regulatory Regimes,Social Policy,Youth and Governance",
+      "teratopic": "Governance,International Economics and Trade,Law and Development,Private Sector Development,Public Sector Development,Social Development",
+      "repnb": "164890",
+      "docdt": "2008-08-22T04:00:00Z",
+      "datestored": "2021-10-07T04:00:00Z",
+      "keywd": {
+        "0": {
+          "keywd": "corruption"
+        },
+        "1": {
+          "keywd": " allegations of fraud"
+        },
+        "2": {
+          "keywd": " qualitative analysis"
+        },
+        "3": {
+          "keywd": " procurement process"
+        },
+        "4": {
+          "keywd": " good road"
+        },
+        "5": {
+          "keywd": " remote area"
+        },
+        "6": {
+          "keywd": " independent oversight"
+        },
+        "7": {
+          "keywd": " civil society"
+        },
+        "8": {
+          "keywd": " administrative sanction"
+        },
+        "9": {
+          "keywd": " corruption case"
+        },
+        "10": {
+          "keywd": " outreach effort"
+        }
+      },
+      "volnb": "1",
+      "geo_regions": {
+        "0": {
+          "geo_region": "Asia"
+        },
+        "1": {
+          "geo_region": "Southeast Asia"
+        },
+        "2": {
+          "geo_region": "World"
+        }
+      },
+      "majdocty": "Publications & Research",
+      "abstracts": {
+        "cdata!": "This press release announces that the World Bank declared that it has debarred the Korean firm Dongsung Construction Co. Ltd. (Dongsung) for fraudulent and corrupt practices in relation to a Bank-financed road project in the Philippines on August 22, 2008."
+      },
+      "colti": "Bank News Release",
+      "repnme": {
+        "repnme": "Announcement of World Bank Sanctions Firm for Helping Rig Bids in One Hundred Fifty Million US Dollars Bank-Financed Philippines Road Project on August 22, 2008"
+      },
+      "display_title": "Announcement of World Bank Sanctions Firm for Helping Rig Bids in One Hundred Fifty Million US Dollars Bank-Financed Philippines Road Project on August 22, 2008",
+      "disclosure_date": "2021-10-07T09:41:50Z",
+      "pdfurl": "http://documents.worldbank.org/curated/en/574241633599845961/pdf/Announcement-of-World-Bank-Sanctions-Firm-for-Helping-Rig-Bids-in-One-Hundred-Fifty-Million-US-Dollars-Bank-Financed-Philippines-Road-Project-on-August-22-2008.pdf",
+      "txturl": "http://documents.worldbank.org/curated/en/574241633599845961/text/Announcement-of-World-Bank-Sanctions-Firm-for-Helping-Rig-Bids-in-One-Hundred-Fifty-Million-US-Dollars-Bank-Financed-Philippines-Road-Project-on-August-22-2008.txt",
+      "disclstat": "Disclosed",
+      "chronical_docm_id": "090224b088a49971",
+      "totvolnb": "1",
+      "versiontyp": "Final",
+      "historic_topic": "Governance,International Economics and Trade,Law and Development,Private Sector Development,Public Sector Development,Social Development",
+      "guid": "574241633599845961",
+      "available_in": "English",
+      "fullavailablein": [],
+      "url": "http://documents.worldbank.org/curated/en/574241633599845961"
+    },
+    "facets": {}
+  }
+}
+
+==================================================
+--- Testing LittleSis (Political/Corporate) ---
+[INPUT URL]: https://littlesis.org/api/entities/search?q=Google
+[INPUT OPTIONS]: {}
+[STATUS]: 200 (530ms)
+[OUTPUT]:
+{
+  "meta": {
+    "currentPage": 1,
+    "pageCount": 3,
+    "copyright": "LittleSis CC BY-SA 4.0",
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "apiVersion": "2.0"
+  },
+  "data": [
+    {
+      "type": "entities",
+      "id": 151,
+      "attributes": {
+        "id": 151,
+        "name": "Google Inc.",
+        "blurb": "American multinational technology company; specializes in Internet-related services, products",
+        "summary": null,
+        "website": "https://www.google.com/",
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2026-04-16T09:15:49Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Google",
+          "Google Inc.",
+          "IRS EIN 77-0493581"
+        ],
+        "types": [
+          "Organization",
+          "Business",
+          "Public Company"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Google",
+            "name_nick": "GOOGLE",
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": "132274",
+            "lda_registrant_id": "320510"
+          },
+          "Business": {
+            "annual_profit": null,
+            "assets": null,
+            "marketcap": null,
+            "net_income": null,
+            "aum": null
+          },
+          "PublicCompany": {
+            "ticker": "GOOG",
+            "sec_cik": 1288776
+          }
+        },
+        "tags": [
+          "corporate-mapping-project",
+          "tech",
+          "corpu"
+        ]
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/151-Google_Inc."
+      }
+    },
+    {
+      "type": "entities",
+      "id": 30709,
+      "attributes": {
+        "id": 30709,
+        "name": "Google Inc. Google Netpac",
+        "blurb": "Google's PAC",
+        "summary": null,
+        "website": null,
+        "parent_id": 151,
+        "primary_ext": "Org",
+        "updated_at": "2025-07-21T17:38:45Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Google Inc. Google Netpac"
+        ],
+        "types": [
+          "Organization",
+          "Political Fundraising Committee",
+          "Other Campaign Committee"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Google Inc. Google Netpac",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          },
+          "PoliticalFundraising": {
+            "fec_id": "C00428623",
+            "type_id": null,
+            "state_id": null
+          }
+        },
+        "tags": []
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/30709-Google_Inc._Google_Netpac"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 82737,
+      "attributes": {
+        "id": 82737,
+        "name": "Google.org",
+        "blurb": "Charitable arm of Google",
+        "summary": null,
+        "website": null,
+        "parent_id": 151,
+        "primary_ext": "Org",
+        "updated_at": "2025-04-13T21:38:04Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Google.org",
+          "Googleorg"
+        ],
+        "types": [
+          "Organization",
+          "Other Not-for-Profit"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Googleorg",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          }
+        },
+        "tags": []
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/82737-Google.org"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 160174,
+      "attributes": {
+        "id": 160174,
+        "name": "GV",
+        "blurb": "venture capital investment arm of Alphabet; originally Google Ventures",
+        "summary": null,
+        "website": "https://www.gv.com/",
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2026-03-05T00:12:13Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "GV",
+          "GV Management Company, L.L.C.",
+          "Google Ventures"
+        ],
+        "types": [
+          "Organization"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Google Ventures",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          }
+        },
+        "tags": [
+          "corpu"
+        ]
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/160174-GV"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 274675,
+      "attributes": {
+        "id": 274675,
+        "name": "Google DeepMind",
+        "blurb": "Artificial Intelligence lab, acquired by Google for $650 million in 2014",
+        "summary": null,
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2025-06-06T17:01:34Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "DeepMind",
+          "DeepMind Technologies Limited",
+          "Google DeepMind"
+        ],
+        "types": [
+          "Organization",
+          "Business"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "DeepMind",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          },
+          "Business": {
+            "annual_profit": null,
+            "assets": null,
+            "marketcap": null,
+            "net_income": null,
+            "aum": null
+          }
+        },
+        "tags": []
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/274675-Google_DeepMind"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 373974,
+      "attributes": {
+        "id": 373974,
+        "name": "Google Cloud",
+        "blurb": null,
+        "summary": null,
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2025-04-05T16:31:47Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Google Cloud",
+          "Google Cloud division"
+        ],
+        "types": [
+          "Organization"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Google Cloud",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          }
+        },
+        "tags": []
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/373974-Google_Cloud"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 380580,
+      "attributes": {
+        "id": 380580,
+        "name": "Google News Initiative",
+        "blurb": null,
+        "summary": "Building a stronger future for journalism\r\nThe Google News Initiative is our effort to work with the news industry to help journalism thrive in the digital age.\r\n\r\nLearn more\r\n\r\nThe latest from the Google News Initiative\r\nLearn more\r\nWe work with news partners in three ways\r\n1\r\nProducts\r\nWe build products to meet the needs of news organizations and grow their digital businesses.\r\n\r\nLearn more\r\n2\r\nPartnerships\r\nWe collaborate with news organizations to solve important business and industry-wide challenges\r\n\r\nLearn more\r\n3\r\nPrograms\r\nWe develop and support programs to drive innovation across the news industry.\r\n\r\nLearn more\r\nGNI in the news\r\nThe future of journalism depends on all of us working together.\r\n\r\nSee how we've worked with news partners\r\nSign up for our newsletter to get updates from the Google News Initiative.\r\nGet the Newsletter Twitter",
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2021-12-15T21:34:11Z",
+        "start_date": "2018-00-00",
+        "end_date": null,
+        "aliases": [
+          "Google News Initiative"
+        ],
+        "types": [
+          "Organization"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Google News Initiative",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          }
+        },
+        "tags": []
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/380580-Google_News_Initiative"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 217718,
+      "attributes": {
+        "id": 217718,
+        "name": "CapitalG",
+        "blurb": "Alphabet growth fund",
+        "summary": null,
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2024-11-20T12:16:44Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "CapitalG",
+          "CapitalG Management Company LLC",
+          "Google Capital"
+        ],
+        "types": [
+          "Organization",
+          "Business"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Google Capital",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          },
+          "Business": {
+            "annual_profit": null,
+            "assets": null,
+            "marketcap": null,
+            "net_income": null,
+            "aum": null
+          }
+        },
+        "tags": [
+          "corpu"
+        ]
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/217718-CapitalG"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 254209,
+      "attributes": {
+        "id": 254209,
+        "name": "Waymo",
+        "blurb": "Formerly Google's Self - Driving Car Project",
+        "summary": "Alphabet Inc's (GOOGL.O) Google self-driving car project recast itself as Waymo on Tuesday December 13 2016, an independent entity within the technology giant, as executives suggested the company is close to bringing its autonomous driving to the public.\r\n\r\nAlthough no deals were announced, the move signals a desire to finally monetize the company's valuable research amid fierce competition from a score of rivals all vying to be the first to launch production-ready self-driving cars.\r\n\r\nGoogle's high-profile program, now in its seventh year, has been at the forefront of self-driving technology, but is now challenged by companies from Uber Technologies Inc [UBER.UL] to Apple Inc (AAPL.O) and traditional car companies in the fast-growing industry.\r\n\r\nFiat Chrysler (FCHA.MI), Google's first partner, teamed up with the tech company in May 2016 to work together to integrate Google's self-driving system into 100 of the carmaker's minivans.\r\n\r\nGoogle has expanded its program over the past year, hiring more engineers while doubling its testing centers from two U.S. cities to four.\r\n\r\nAlthough there have been some significant departures over the past year - Chief Technical Officer Chris Urmson left in August after leading the project from its inception - some new hires have pointed to the program's readiness to move past its experimental stage.\r\n\r\nIn July, the project appointed its first general counsel and a month later it hired former Airbnb executive Shaun Stewart as director of the project, with a mandate to commercialize the company's self-driving technology.",
+        "website": "https://www.waymo.com",
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2026-02-06T20:20:26Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Google Self-Driving Car Project",
+          "Waymo"
+        ],
+        "types": [
+          "Organization",
+          "Business"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Waymo",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          },
+          "Business": {
+            "annual_profit": null,
+            "assets": null,
+            "marketcap": null,
+            "net_income": null,
+            "aum": null
+          }
+        },
+        "tags": []
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/254209-Waymo"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 375211,
+      "attributes": {
+        "id": 375211,
+        "name": "Jigsaw",
+        "blurb": "Offshoot of Google; machine learning tool to monitor harassment and hate speech",
+        "summary": null,
+        "website": "https://jigsaw.google.com/",
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2025-10-23T05:51:27Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Google Ideas",
+          "Jigsaw",
+          "Jigsaw LLC"
+        ],
+        "types": [
+          "Organization"
+        ],
+        "extensions": {
+          "Org": {
+            "name": "Jigsaw",
+            "name_nick": null,
+            "employees": null,
+            "revenue": null,
+            "fedspending_id": null,
+            "lda_registrant_id": null
+          }
+        },
+        "tags": []
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/375211-Jigsaw"
+      }
+    }
+  ]
+}
+
+==================================================
+--- Testing Gel des Avoirs (France - Data) ---
+[INPUT URL]: https://gels-avoirs.dgtresor.gouv.fr/ApiPublic/api/v1/publication/flux-json
+[INPUT OPTIONS]: {}
+[STATUS]: 404 (238ms)
+[OUTPUT]:
+... (truncated if long)
+
+==================================================
+--- Testing Interpol (Notices Rouges) ---
+[INPUT URL]: https://ws-public.interpol.int/notices/v1/red?name=Putin
+[INPUT OPTIONS]: {}
+[STATUS]: 200 (116ms)
+[OUTPUT]:
+{
+  "total": 0,
+  "query": {
+    "page": 1,
+    "resultPerPage": 20,
+    "name": "Putin"
+  },
+  "_embedded": {
+    "notices": []
+  },
+  "_links": {
+    "self": {
+      "href": "https://ws-public.interpol.int/notices/v1/red?name=Putin&resultPerPage=20&page=1"
+    },
+    "first": {
+      "href": "https://ws-public.interpol.int/notices/v1/red?name=Putin&resultPerPage=20&page=1"
+    },
+    "last": {
+      "href": "https://ws-public.interpol.int/notices/v1/red?name=Putin&resultPerPage=20&page=1"
+    }
+  }
+}
+
+==================================================
+--- Testing UK Sanctions List (Direct) ---
+[INPUT URL]: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1100000/UK_Sanctions_List.csv
+[INPUT OPTIONS]: {}
+[STATUS]: 404 (267ms)
+[OUTPUT]:
+{
+  "_response_info": {
+    "status": "not found"
+  }
+}
+
+==================================================
+--- Testing RNA (Associations) ---
+[INPUT URL]: https://recherche-entreprises.api.gouv.fr/search?q=W751217475&minimal=True
+[INPUT OPTIONS]: {}
+[STATUS]: 200 (87ms)
+[OUTPUT]:
+{
+  "results": [
+    {
+      "siren": "791593221",
+      "nom_complet": "COMME UN LUNDI RECORDS",
+      "nom_raison_sociale": "COMME UN LUNDI RECORDS",
+      "sigle": null,
+      "nombre_etablissements": 1,
+      "nombre_etablissements_ouverts": 1,
+      "activite_principale": "59.20Z",
+      "activite_principale_naf25": "59.20Y",
+      "categorie_entreprise": null,
+      "caractere_employeur": null,
+      "annee_categorie_entreprise": null,
+      "date_creation": "2012-11-27",
+      "date_fermeture": null,
+      "date_mise_a_jour": "2026-05-07T11:13:27",
+      "date_mise_a_jour_insee": "2025-12-06T09:30:23",
+      "date_mise_a_jour_rne": null,
+      "etat_administratif": "A",
+      "nature_juridique": "9220",
+      "section_activite_principale": "J",
+      "tranche_effectif_salarie": "NN",
+      "annee_tranche_effectif_salarie": null,
+      "statut_diffusion": "O"
+    }
+  ],
+  "total_results": 1,
+  "page": 1,
+  "per_page": 10,
+  "total_pages": 1
+}
+
+==================================================
