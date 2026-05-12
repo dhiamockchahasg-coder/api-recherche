@@ -27,10 +27,10 @@ export class ComplianceService {
   private readonly endpoints = {
     littlesis: '/api-proxy/littlesis/api/entities/search',
     etalab: '/api-proxy/recherche-entreprises/search',
-    interpol: 'https://ws-public.interpol.int/notices/v1/red',
+    interpol: '/api-proxy/interpol/notices/v1/red',
     worldbank: '/api-proxy/worldbank/api/v3/wds',
-    csl: '/api-proxy/csl/gateway/v1/consolidated_screening_list/search',
-    opencorporates: '/api-proxy/opencorporates/v0.4/companies/search'
+    eu_sanctions: '/api-proxy/dilisense/api/v1/check',
+    wikidata: '/api-proxy/wikidata/api.php'
   };
 
   constructor(private http: HttpClient) {}
@@ -65,25 +65,24 @@ export class ComplianceService {
     );
   }
 
-  searchCSL(query: string): Observable<CSLResponse> {
-    let params = new HttpParams().set('q', query);
-    if (environment.cslApiKey) {
-      params = params.set('api_key', environment.cslApiKey);
-    }
-    return this.http.get<CSLResponse>(this.endpoints.csl, { params }).pipe(
+  searchEU_Sanctions(query: string): Observable<any> {
+    const params = new HttpParams().set('name', query);
+    return this.http.get<any>(this.endpoints.eu_sanctions, { params }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of({ total: 0, results: [] }))
+      catchError(() => of({ found: false }))
     );
   }
 
-  searchOpenCorporates(query: string): Observable<OpenCorporatesResponse> {
-    let params = new HttpParams().set('q', query);
-    if (environment.openCorporatesApiKey) {
-      params = params.set('api_token', environment.openCorporatesApiKey);
-    }
-    return this.http.get<OpenCorporatesResponse>(this.endpoints.opencorporates, { params }).pipe(
+  searchWikidata(query: string): Observable<any> {
+    const params = new HttpParams()
+      .set('action', 'wbsearchentities')
+      .set('language', 'en')
+      .set('format', 'json')
+      .set('search', query);
+      
+    return this.http.get<any>(this.endpoints.wikidata, { params }).pipe(
       timeout(environment.apiTimeout),
-      catchError(() => of({ results: { total_count: 0, companies: [] } }))
+      catchError(() => of({ search: [] }))
     );
   }
 }

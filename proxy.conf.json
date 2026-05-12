@@ -1,4 +1,10 @@
 {
+  "/api-proxy/dilisense": {
+    "target": "https://dilisense.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/dilisense": "" }
+  },
   "/api-proxy/interpol": {
     "target": "https://ws-public.interpol.int",
     "secure": true,
@@ -28,6 +34,15 @@
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/csl": "" }
+  },
+  "/api-proxy/wikidata": {
+    "target": "https://www.wikidata.org/w",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/wikidata": "" },
+    "headers": {
+      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
+    }
   },
   "/api-proxy/opencorporates": {
     "target": "https://api.opencorporates.com",

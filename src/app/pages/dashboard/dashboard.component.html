@@ -13,7 +13,24 @@
         {{ loading ? 'Analyse...' : 'Lancer l\'Analyse' }}
       </button>
     </div>
-    <span class="hint">Sources : CSL, OpenCorporates, LittleSis, Etalab, Interpol, World Bank...</span>
+    <span class="hint">Sources : EU Sanctions, Interpol, LittleSis, Etalab, Wikidata, World Bank...</span>
+  </div>
+
+  <!-- RISK ASSESSMENT BAR -->
+  <div class="risk-assessment" *ngIf="status === 'success'">
+    <div class="risk-info">
+      <span class="risk-label">Indice de Dangerosité Global</span>
+      <span class="risk-badge" [style.color]="dangerColor">{{ dangerColor }} {{ dangerLevel }}</span>
+    </div>
+    <div class="risk-meter">
+      <div class="bar-background">
+        <div class="bar-fill" [style.width.%]="overallRiskScore" [style.background-color]="dangerColor"></div>
+      </div>
+      <span class="risk-value">{{ overallRiskScore }}/100</span>
+    </div>
+    <div class="risk-text">
+      {{ dangerBar }} Analyse basée sur l'agrégation de 8 sources internationales.
+    </div>
   </div>
 
   <nav class="tabs">
@@ -92,42 +109,36 @@
         </div>
       </div>
 
-      <!-- CSL / GLOBAL SANCTIONS -->
-      <div class="result-card" *ngIf="unifiedResults.csl && shouldShowCard('csl')">
-        <div class="card-tag csl">Global Sanctions (CSL)</div>
-        <h3>Trade.gov Results</h3>
+      <!-- EU SANCTIONS -->
+      <div class="result-card" *ngIf="unifiedResults.eu_sanctions && shouldShowCard('eu_sanctions')">
+        <div class="card-tag csl">Global Sanctions (EU/UN)</div>
+        <h3>EU & UN Sanctions List</h3>
         <div class="entity-list">
-          <div class="entity-item" *ngFor="let item of unifiedResults.csl.results">
+          <div class="entity-item" *ngIf="unifiedResults.eu_sanctions.found">
             <div class="entity-header">
-              <span class="entity-name">{{ item.name }}</span>
-              <span class="entity-source">{{ item.source }}</span>
+              <span class="entity-name">{{ unifiedResults.eu_sanctions.query.name }}</span>
+              <span class="entity-source">HIT DETECTED</span>
             </div>
-            <p class="entity-meta" *ngIf="item.alt_names?.length">AKA: {{ item.alt_names.join(', ') }}</p>
-            <div class="addresses" *ngIf="item.addresses?.length">
-              <div class="address-item" *ngFor="let addr of item.addresses">
-                {{ addr.address }}, {{ addr.city }}, {{ addr.country }}
-              </div>
-            </div>
-            <a [href]="item.source_information_url" target="_blank" class="source-link">Plus d'infos</a>
+            <p class="entity-meta">Sources: {{ unifiedResults.eu_sanctions.sources?.join(', ') }}</p>
+            <div class="danger-alert">🔴 Cet individu est sous sanctions internationales.</div>
           </div>
+          <div *ngIf="!unifiedResults.eu_sanctions.found" class="no-results">Aucune sanction active trouvée dans la base EU/UN.</div>
         </div>
-        <div *ngIf="unifiedResults.csl.results.length === 0" class="no-results">Aucune sanction trouvée (CSL).</div>
       </div>
 
-      <!-- OPENCORPORATES -->
-      <div class="result-card" *ngIf="unifiedResults.opencorporates && shouldShowCard('opencorporates')">
-        <div class="card-tag companies">Global Registry</div>
-        <h3>OpenCorporates</h3>
+      <div class="result-card" *ngIf="unifiedResults.wikidata && shouldShowCard('wikidata')">
+        <div class="card-tag world">Wikidata Public Figure</div>
+        <h3>Résultats Wikidata</h3>
         <div class="entity-list">
-          <div class="entity-item" *ngFor="let item of unifiedResults.opencorporates.results.companies">
+          <div class="entity-item" *ngFor="let item of unifiedResults.wikidata.search">
             <div class="entity-header">
-              <span class="entity-name">{{ item.company.name }}</span>
-              <span class="entity-siren">{{ item.company.jurisdiction_code | uppercase }}: {{ item.company.company_number }}</span>
+              <span class="entity-name">{{ item.label }}</span>
             </div>
-            <p class="entity-meta">{{ item.company.company_type }} • Status: {{ item.company.current_status }}</p>
+            <p class="entity-meta">{{ item.description || 'Personne Publique / PEP' }}</p>
+            <a [href]="item.concepturi" target="_blank" class="source-link">Lien Wikidata</a>
           </div>
         </div>
-        <div *ngIf="unifiedResults.opencorporates.results.total_count === 0" class="no-results">Aucune entreprise trouvée.</div>
+        <div *ngIf="unifiedResults.wikidata.search?.length === 0" class="no-results">Aucun personnage public trouvé.</div>
       </div>
 
       <!-- PLACEHOLDER / LOADING -->

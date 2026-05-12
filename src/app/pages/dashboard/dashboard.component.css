@@ -213,6 +213,81 @@ input {
   animation: spin 1s infinite linear;
 }
 
+/* RISK ASSESSMENT */
+.risk-assessment {
+  max-width: 900px;
+  margin: -2rem auto 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  backdrop-filter: var(--glass-effect);
+}
+
+.risk-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.risk-label {
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.risk-badge {
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.risk-meter {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bar-background {
+  flex: 1;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.risk-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+  min-width: 60px;
+}
+
+.risk-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: 'Fira Code', monospace;
+}
+
+.card-tag.world { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+.danger-alert {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  color: #f87171;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
