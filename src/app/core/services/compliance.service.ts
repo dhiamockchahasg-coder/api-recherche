@@ -1,31 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
-import { catchError, timeout, map } from 'rxjs/operators';
-import { 
-  LittleSisResponse, 
-  EtalabResponse, 
-  InterpolResponse, 
+import { catchError, timeout, map, shareReplay } from 'rxjs/operators';
+import {
+  LittleSisResponse,
+  EtalabResponse,
+  InterpolResponse,
   WorldBankResponse,
-  CSLResponse,
-  OpenCorporatesResponse,
   GelAvoirsResponse
 } from '../../models/compliance.models';
 import { environment } from '../../../environments/environment';
-import { 
-  MOCK_LITTLESIS, 
-  MOCK_ETALAB, 
-  MOCK_INTERPOL, 
-  MOCK_WORLD_BANK,
-  MOCK_CSL,
-  MOCK_OPENCORPORATES
-} from '../mock-data';
-
-// Fallback logic to ensure results are always shown
-const mockAleph = (q: string) => ({
-  total: 1,
-  results: [{ name: q.toUpperCase(), schema: 'Person', collection: { label: 'Global Investigations (OCCRP)' } }]
-});
 
 @Injectable({
   providedIn: 'root'
@@ -36,18 +20,26 @@ export class ComplianceService {
     etalab: '/api-proxy/recherche-entreprises/search',
     interpol: '/api-proxy/interpol/notices/v1/red',
     worldbank: '/api-proxy/worldbank/api/v3/wds',
-    dilisense_individual: '/api-proxy/dilisense/v1/checkIndividual',
-    dilisense_entity: '/api-proxy/dilisense/v1/checkEntity',
     wikidata: '/api-proxy/wikidata/api.php',
     littlesis_rels: '/api-proxy/littlesis/api/entities',
     gels_avoirs: '/api-proxy/gels-avoirs/ApiPublic/api/v1/publication/derniere-publication-fichier-json',
     un_sanctions: '/api-proxy/un-sanctions/resources/xml/en/consolidated.xml',
-    opencorporates: '/api-proxy/opencorporates/v0.4',
     fbi_wanted: '/api-proxy/fbi/wanted/v1/list',
-    aleph: '/api-proxy/aleph/api/2/entities'
+    aleph: '/api-proxy/aleph/api/2/entities',
+    csl: '/api-proxy/csl/static/consolidated_screening_list/consolidated.json',
+    opensanctions: '/api-proxy/opensanctions/match/default',
+    eu_sanctions: '/api-proxy/eu-sanctions/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content',
+    opencorporates: '/api-proxy/opencorporates/v0.4/companies/search',
+    icij: '/api-proxy/icij/api/v1/reconcile/pandora-papers',
+    wikidata_sparql: '/api-proxy/wikidata-sparql/sparql',
+    inpi_rbe: '/api-proxy/inpi/entreprises'
   };
 
-  constructor(private http: HttpClient) {}
+  // Cache for large static feeds
+  private cslCache$?: Observable<any>;
+  private frenchCache$?: Observable<any>;
+
+  constructor(private http: HttpClient) { }
 
   searchLittleSis(query: string): Observable<LittleSisResponse> {
     return this.http.get<LittleSisResponse>(this.endpoints.littlesis, { params: { q: query } }).pipe(
@@ -65,10 +57,10 @@ export class ComplianceService {
   }
 
   searchInterpol(name: string): Observable<InterpolResponse> {
+    // Interpol API is sensitive; headers are handled by proxy.conf.js
     return this.http.get<InterpolResponse>(this.endpoints.interpol, { params: { name } }).pipe(
       timeout(environment.apiTimeout),
-      map(res => res.total > 0 ? res : MOCK_INTERPOL),
-      catchError(() => of(MOCK_INTERPOL))
+      catchError(() => of({ total: 0, _embedded: { notices: [] } }))
     );
   }
 
@@ -80,119 +72,72 @@ export class ComplianceService {
     );
   }
 
-  searchEU_Sanctions(query: string): Observable<any> {
-    const params = new HttpParams().set('names', query);
-    
-    // Dilisense REQUIRES an API Key in the headers
-    const headers: Record<string, string> = {
-      'Accept': 'application/json'
-    };
-
-    if (environment.dilisenseApiKey) {
-      headers['x-api-key'] = environment.dilisenseApiKey;
-    }
-
-    // Aggregating French National and UN Global sources
+  searchGlobalSanctions(query: string): Observable<any> {
     return forkJoin({
-      /* individual: this.http.get<any>(this.endpoints.dilisense_individual, { params, headers }).pipe(
-        catchError(() => of({ found: false, matches: [] }))
-      ),
-      entity: this.http.get<any>(this.endpoints.dilisense_entity, { params, headers }).pipe(
-        catchError(() => of({ found: false, matches: [] }))
-      ), */
-      french: this.searchFrenchSanctions(query).pipe(
-        catchError(() => of({ publications: [] }))
-      ),
-      un: this.searchUNSanctions(query).pipe(
-        map(res => res.found ? res : { found: true, matches: [query] }),
-        catchError(() => of({ found: true, matches: [query] }))
-      )
+      french: this.searchFrenchSanctions(query),
+      un: this.searchUNSanctions(query),
+      eu: this.searchEUSanctions(query),
+      opensanctions: this.searchOpenSanctions(query),
+      csl: this.searchCSL(query)
     }).pipe(
-      timeout(environment.apiTimeout),
-      map((res: { /* individual: any, entity: any, */ french: GelAvoirsResponse, un: any }) => {
-        const found = /* res.individual.found || res.entity.found || */ 
-                      (res.french.publications && res.french.publications.length > 0) ||
-                      res.un.found;
-                      
-        const sources = [
-          /* ...(res.individual.sources || []), 
-          ...(res.entity.sources || []), */
-          ...(res.french.publications ? res.french.publications.map(() => 'French National Registry (DGTresor)') : []),
-          ...(res.un.found ? ['United Nations Security Council'] : [])
-        ];
+      map(res => {
+        const found = (res.french.publications?.length > 0) || 
+                      res.un.found || 
+                      res.eu.found ||
+                      (res.opensanctions?.responses?.q1?.results?.length > 0) ||
+                      (res.csl.total > 0);
         
+        const sources = [
+          ...(res.french.publications?.length ? ['French National (DGTrésor)'] : []),
+          ...(res.un.found ? ['United Nations (UNSC)'] : []),
+          ...(res.eu.found ? ['European Union (CFSP)'] : []),
+          ...(res.opensanctions?.responses?.q1?.results?.length ? ['OpenSanctions (Global)'] : []),
+          ...(res.csl.results?.map((item: any) => item.source) || [])
+        ];
+
         return {
           found,
-          query: { name: query },
+          query,
           sources: [...new Set(sources)],
-          details: {
-            /* individual: res.individual,
-            entity: res.entity, */
-            french: res.french,
-            un: res.un
-          }
+          details: res
         };
       }),
-      catchError((error) => {
-        console.error('Sanctions API Error:', error);
-        return of({ found: false, matches: [] });
+      catchError(err => {
+        console.error('Global Sanctions Error:', err);
+        return of({ found: false, sources: [], details: {} });
       })
     );
   }
 
   searchFrenchSanctions(query: string): Observable<GelAvoirsResponse> {
-    return this.http.get<any>(this.endpoints.gels_avoirs).pipe(
-      timeout(8000), // Prevent large 5MB JSON from blocking the UI indefinitely
+    if (!this.frenchCache$) {
+      this.frenchCache$ = this.http.get<any>(this.endpoints.gels_avoirs).pipe(
+        shareReplay(1),
+        catchError(() => of(null))
+      );
+    }
+
+    return this.frenchCache$.pipe(
       map(response => {
+        if (!response) return { publications: [] };
         const all = response?.Publications?.PublicationDetail || [];
         const q = query.toLowerCase().trim();
-        
         const filtered = all.filter((p: any) => {
           const nom = (p.Nom || '').toLowerCase();
-          
-          // Get all aliases and names from RegistreDetail
           const details = p.RegistreDetail || [];
-          const names = details
-            .filter((d: any) => d.TypeChamp === 'PRENOM' || d.TypeChamp === 'ALIAS')
-            .flatMap((d: any) => (d.Valeur || []).map((v: any) => (v.Prenom || v.Alias || '').toLowerCase()));
-          
-          return nom.includes(q) || names.some((n: string) => n.includes(q));
+          const aliases = details
+            .filter((d: any) => d.TypeChamp === 'ALIAS' || d.TypeChamp === 'PRENOM')
+            .flatMap((d: any) => (d.Valeur || []).map((v: any) => (v.Alias || v.Prenom || '').toLowerCase()));
+          return nom.includes(q) || aliases.some((a: string) => a.includes(q));
         });
-
-        return { 
-          publications: filtered.map((p: any) => ({
+        return {
+          publications: filtered.slice(0, 5).map((p: any) => ({
             id: p.IdRegistre?.toString(),
             nom: p.Nom,
-            prenom: p.RegistreDetail?.find((d: any) => d.TypeChamp === 'PRENOM')?.Valeur?.[0]?.Prenom || '',
             motif: p.RegistreDetail?.find((d: any) => d.TypeChamp === 'MOTIFS')?.Valeur?.[0]?.Motif || ''
           }))
         };
-      }),
-      catchError((err) => {
-        console.error('French Sanctions Fetch Error:', err);
-        return of({ publications: [] });
       })
-    );
-  }
-
-  searchWikidata(query: string): Observable<any> {
-    const params = new HttpParams()
-      .set('action', 'wbsearchentities')
-      .set('language', 'en')
-      .set('format', 'json')
-      .set('search', query);
-      
-    return this.http.get<any>(this.endpoints.wikidata, { params }).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ search: [] }))
-    );
-  }
-
-  searchAssociates(entityId: string): Observable<any> {
-    const url = `${this.endpoints.littlesis_rels}/${entityId}/relationships`;
-    return this.http.get<any>(url).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ data: [] }))
     );
   }
 
@@ -203,36 +148,37 @@ export class ComplianceService {
         const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
         const q = query.toLowerCase().trim();
         
-        // Simple search in all FIRST_NAME and SECOND_NAME tags
-        const names = Array.from(xmlDoc.getElementsByTagName('FIRST_NAME'))
-          .concat(Array.from(xmlDoc.getElementsByTagName('SECOND_NAME')))
-          .concat(Array.from(xmlDoc.getElementsByTagName('DATAID')));
-        
-        const matches = names.filter(n => n.textContent?.toLowerCase().includes(q));
-        
+        // Comprehensive search in FIRST_NAME, SECOND_NAME, and COMMENTS
+        const elements = Array.from(xmlDoc.querySelectorAll('FIRST_NAME, SECOND_NAME, COMMENTS, NATIONALITY'));
+        const matches = elements.filter(el => el.textContent?.toLowerCase().includes(q));
+
         return {
           found: matches.length > 0,
-          matches: matches.slice(0, 5).map(m => m.textContent)
+          matches: [...new Set(matches.slice(0, 5).map(m => m.textContent?.trim()))]
         };
       }),
       catchError(() => of({ found: false, matches: [] }))
     );
   }
 
-  searchOpenCorporates(query: string): Observable<OpenCorporatesResponse> {
-    const params = new HttpParams().set('q', query).set('per_page', '5');
-    return this.http.get<OpenCorporatesResponse>(`${this.endpoints.opencorporates}/companies/search`, { params }).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ results: { total_count: 0, companies: [] } }))
-    );
-  }
+  searchCSL(query: string): Observable<any> {
+    if (!this.cslCache$) {
+      this.cslCache$ = this.http.get<any>(this.endpoints.csl).pipe(
+        shareReplay(1),
+        catchError(() => of({ results: [] }))
+      );
+    }
 
-  searchOfficers(query: string): Observable<any> {
-    // Search for people who are officers in companies
-    const params = new HttpParams().set('q', query).set('per_page', '5');
-    return this.http.get<any>(`${this.endpoints.opencorporates}/officers/search`, { params }).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ results: { total_count: 0, officers: [] } }))
+    return this.cslCache$.pipe(
+      map(response => {
+        const all = response.results || [];
+        const q = query.toLowerCase().trim();
+        const matches = all.filter((item: any) => 
+          (item.name || '').toLowerCase().includes(q) || 
+          (item.alt_names || []).some((alt: string) => alt.toLowerCase().includes(q))
+        );
+        return { total: matches.length, results: matches.slice(0, 10) };
+      })
     );
   }
 
@@ -248,8 +194,115 @@ export class ComplianceService {
     const params = new HttpParams().set('q', query).set('limit', '5');
     return this.http.get<any>(this.endpoints.aleph, { params }).pipe(
       timeout(environment.apiTimeout),
-      map(res => res.total > 0 ? res : mockAleph(query)),
-      catchError(() => of(mockAleph(query)))
+      catchError(() => of({ total: 0, results: [] }))
+    );
+  }
+
+  searchWikidata(query: string): Observable<any> {
+    const params = new HttpParams()
+      .set('action', 'wbsearchentities')
+      .set('language', 'en')
+      .set('format', 'json')
+      .set('search', query);
+
+    return this.http.get<any>(this.endpoints.wikidata, { params }).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ search: [] }))
+    );
+  }
+
+  searchAssociates(entityId: string): Observable<any> {
+    const url = `${this.endpoints.littlesis_rels}/${entityId}/relationships`;
+    return this.http.get<any>(url).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ data: [] }))
+    );
+  }
+
+  searchOpenSanctions(query: string): Observable<any> {
+    const body = {
+      queries: {
+        q1: {
+          schema: "Person",
+          properties: {
+            name: [query]
+          }
+        }
+      }
+    };
+    return this.http.post<any>(this.endpoints.opensanctions, body).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ responses: { q1: { results: [] } } }))
+    );
+  }
+
+  searchEUSanctions(query: string): Observable<any> {
+    return this.http.get(this.endpoints.eu_sanctions, { responseType: 'text' }).pipe(
+      map(xmlString => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+        const q = query.toLowerCase().trim();
+        
+        // Search in nameAlias and other relevant tags
+        const nameAliases = Array.from(xmlDoc.querySelectorAll('nameAlias'));
+        const matches = nameAliases.filter(el => {
+          const firstName = el.getAttribute('firstName')?.toLowerCase() || '';
+          const lastName = el.getAttribute('lastName')?.toLowerCase() || '';
+          const wholeName = el.getAttribute('wholeName')?.toLowerCase() || '';
+          return firstName.includes(q) || lastName.includes(q) || wholeName.includes(q);
+        });
+
+        return {
+          found: matches.length > 0,
+          matches: matches.slice(0, 5).map(m => m.getAttribute('wholeName') || m.getAttribute('lastName') || 'Unknown')
+        };
+      }),
+      catchError(() => of({ found: false, matches: [] }))
+    );
+  }
+
+  searchOpenCorporates(query: string): Observable<any> {
+    return this.http.get<any>(this.endpoints.opencorporates, { params: { q: query } }).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ results: { total_count: 0, companies: [] } }))
+    );
+  }
+
+  searchICIJ(query: string): Observable<any> {
+    const body = {
+      queries: {
+        q1: { query }
+      }
+    };
+    return this.http.post<any>(this.endpoints.icij, body).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ q1: { result: [] } }))
+    );
+  }
+
+  searchWikidataPEP(query: string): Observable<any> {
+    const sparql = `
+      SELECT ?person ?personLabel ?positionLabel WHERE {
+        ?person wdt:P31 wd:Q5.
+        ?person ?labelProp "${query}"@en.
+        ?person p:P39 ?statement.
+        ?statement ps:P39 ?position.
+        ?position wdt:P279* wd:Q22631.
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+      } LIMIT 5
+    `;
+    const params = new HttpParams().set('query', sparql).set('format', 'json');
+    return this.http.get<any>(this.endpoints.wikidata_sparql, { params }).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ results: { bindings: [] } }))
+    );
+  }
+
+  getBeneficiairesEffectifs(siren: string): Observable<any> {
+    const url = `${this.endpoints.inpi_rbe}/${siren}/beneficiaires-effectifs`;
+    return this.http.get<any>(url).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ beneficiaires_effectifs: [] }))
     );
   }
 }

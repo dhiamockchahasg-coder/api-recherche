@@ -224,3 +224,93 @@
 
 .empty-state h2 { color: var(--text-muted); }
 .empty-state p { color: var(--text-muted); max-width: 400px; margin: 0 auto; }
+
+.risk-factors {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.risk-factors li {
+  font-size: 0.85rem;
+  color: var(--text-dark);
+  padding: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.risk-factors li::before {
+  content: "•";
+  color: var(--danger);
+  font-weight: bold;
+}
+
+/* NEW STYLES */
+
+/* NEW STYLES */
+.alert-badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.badge.offshore { background: #fee2e2; color: #b91c1c; border: 1px solid #fecdd3; }
+.badge.pep { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; }
+
+.sub-alert {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #fecdd3;
+}
+
+.icij-item {
+  padding: 0.75rem;
+  background: #fff1f2;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid #ef4444;
+}
+
+.rbe-box, .pep-box {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 2px dashed var(--border);
+}
+
+.rbe-box h4, .pep-box h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rbe-item, .pep-item {
+  background: var(--bg);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.rbe-item strong, .pep-item strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.company-item .siren {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.card-header.danger { background: #fff1f2; border-bottom-color: #fecdd3; }

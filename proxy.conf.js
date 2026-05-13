@@ -1,15 +1,14 @@
 const PROXY_CONFIG = {
-  "/api-proxy/dilisense": {
-    "target": "https://api.dilisense.com",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/dilisense": "" }
-  },
   "/api-proxy/interpol": {
     "target": "https://ws-public.interpol.int",
     "secure": true,
     "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/interpol": "" }
+    "pathRewrite": { "^/api-proxy/interpol": "" },
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Accept": "application/json, text/javascript, */*; q=0.01",
+      "Referer": "https://www.interpol.int/"
+    }
   },
   "/api-proxy/recherche-entreprises": {
     "target": "https://recherche-entreprises.api.gouv.fr",
@@ -41,12 +40,6 @@ const PROXY_CONFIG = {
       "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
     }
   },
-  "/api-proxy/opencorporates": {
-    "target": "https://api.opencorporates.com",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/opencorporates": "" }
-  },
   "/api-proxy/gels-avoirs": {
     "target": "https://gels-avoirs.dgtresor.gouv.fr",
     "secure": true,
@@ -62,12 +55,7 @@ const PROXY_CONFIG = {
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/un-sanctions": "" },
-    "followRedirects": true,
-    "onProxyRes": function (proxyRes, req, res) {
-      if (proxyRes.statusCode >= 300 && proxyRes.statusCode < 400 && proxyRes.headers.location) {
-        console.log('Redirecting to:', proxyRes.headers.location);
-      }
-    }
+    "followRedirects": true
   },
   "/api-proxy/fbi": {
     "target": "https://api.fbi.gov",
@@ -83,6 +71,65 @@ const PROXY_CONFIG = {
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/aleph": "" }
+  },
+  "/api-proxy/csl": {
+    "target": "https://api.trade.gov",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/csl": "" }
+  },
+  "/api-proxy/uk-sanctions": {
+    "target": "https://ofsistorage.blob.core.windows.net",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/uk-sanctions": "" }
+  },
+  "/api-proxy/opensanctions": {
+    "target": "https://api.opensanctions.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/opensanctions": "" },
+    "headers": {
+      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
+    }
+  },
+  "/api-proxy/eu-sanctions": {
+    "target": "https://webgate.ec.europa.eu",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/eu-sanctions": "" },
+    "followRedirects": true
+  },
+  "/api-proxy/inpi": {
+    "target": "https://api.inpi.fr",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/inpi": "" },
+    "headers": {
+      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
+    }
+  },
+  "/api-proxy/opencorporates": {
+    "target": "https://api.opencorporates.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/opencorporates": "" }
+  },
+  "/api-proxy/icij": {
+    "target": "https://offshoreleaks.icij.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/icij": "" }
+  },
+  "/api-proxy/wikidata-sparql": {
+    "target": "https://query.wikidata.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/wikidata-sparql": "" },
+    "headers": {
+      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)",
+      "Accept": "application/sparql-results+json"
+    }
   }
 };
 

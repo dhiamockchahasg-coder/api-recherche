@@ -108,3 +108,56 @@ export interface GelAvoirsPerson {
 export interface GelAvoirsResponse {
   publications: GelAvoirsPerson[];
 }
+
+export interface OpenSanctionsMatchResponse {
+  responses: {
+    [key: string]: {
+      results: Array<{
+        id: string;
+        schema: string;
+        properties: {
+          name: string[];
+          topics?: string[];
+          status?: string[];
+          summary?: string[];
+        };
+        score: number;
+      }>;
+    };
+  };
+}
+
+export interface WikidataSparqlResponse {
+  results: {
+    bindings: Array<{
+      person: { value: string };
+      personLabel: { value: string };
+      positionLabel?: { value: string };
+    }>;
+  };
+}
+
+export interface ICIJReconcileResponse {
+  [key: string]: {
+    result: Array<{
+      id: string;
+      name: string;
+      score: number;
+      match: boolean;
+      type: Array<{ id: string; name: string }>;
+    }>;
+  };
+}
+
+export interface RBEResponse {
+  siren: string;
+  beneficiaires_effectifs: Array<{
+    nom: string;
+    prenoms: string;
+    date_naissance_mois: string;
+    date_naissance_annee: string;
+    nationalite: string;
+    parts_directes: number;
+    parts_indirectes: number;
+  }>;
+}

@@ -24,7 +24,14 @@
     </div>
     <div class="risk-details">
       <h2>{{ dangerLevel }} Threat Level</h2>
-      <p>Aggregated from {{ (unifiedResults.eu_sanctions?.sources?.length || 0) + 7 }} international sources.</p>
+      <p>Aggregated from {{ (unifiedResults.global_sanctions?.sources?.length || 0) + 10 }} international sources.</p>
+      <ul class="risk-factors" *ngIf="riskFactors.length > 0">
+        <li *ngFor="let factor of riskFactors">{{ factor }}</li>
+      </ul>
+      <div class="alert-badges">
+        <span *ngIf="unifiedResults.icij?.q1?.result?.length > 0" class="badge offshore">⚠️ OFFSHORE ALERT</span>
+        <span *ngIf="unifiedResults.wikidata_pep?.results?.bindings?.length > 0" class="badge pep">🏛️ PEP DETECTED</span>
+      </div>
     </div>
   </div>
 
@@ -41,19 +48,25 @@
     <div class="results-grid" *ngIf="status === 'success'">
       
       <!-- SANCTIONS & WANTED -->
-      <div class="card" *ngIf="shouldShowCard('eu_sanctions')">
+      <div class="card" *ngIf="shouldShowCard('global_sanctions')">
         <div class="card-header">
           <h3>Official Sanctions</h3>
-          <span class="status-badge" [class.danger]="unifiedResults.eu_sanctions?.found">
-            {{ unifiedResults.eu_sanctions?.found ? 'HIT FOUND' : 'CLEAN' }}
+          <span class="status-badge" [class.danger]="unifiedResults.global_sanctions?.found">
+            {{ unifiedResults.global_sanctions?.found ? 'HIT FOUND' : 'CLEAN' }}
           </span>
         </div>
         <div class="card-content">
-          <div *ngIf="unifiedResults.eu_sanctions?.found" class="alert-box">
-            <p>Listed on: {{ unifiedResults.eu_sanctions.sources?.join(', ') }}</p>
+          <div *ngIf="unifiedResults.global_sanctions?.found" class="alert-box">
+            <p>Listed on: {{ unifiedResults.global_sanctions.sources?.join(', ') }}</p>
+            <div *ngIf="unifiedResults.global_sanctions.details?.eu?.matches?.length" class="sub-alert">
+              <strong>EU Matches:</strong> {{ unifiedResults.global_sanctions.details.eu.matches.join(', ') }}
+            </div>
+            <div *ngIf="unifiedResults.global_sanctions.details?.opensanctions?.responses?.q1?.results?.[0]" class="sub-alert">
+              <strong>OpenSanctions Score:</strong> {{ unifiedResults.global_sanctions.details.opensanctions.responses.q1.results[0].score | number:'1.2-2' }}
+            </div>
           </div>
-          <div *ngIf="!unifiedResults.eu_sanctions?.found" class="success-box">
-            No active sanctions found in UN/EU/FR databases.
+          <div *ngIf="!unifiedResults.global_sanctions?.found" class="success-box">
+            No active sanctions found in UN/US/EU/FR databases.
           </div>
         </div>
       </div>
@@ -87,6 +100,20 @@
             <p style="font-size: 0.8rem; color: #64748b;">{{ res.schema }} • {{ res.collection?.label }}</p>
           </div>
           <div *ngIf="unifiedResults.aleph?.total === 0" class="empty-msg">No investigative records found.</div>
+        </div>
+      </div>
+
+      <!-- ICIJ OFFSHORE LEAKS (NEW) -->
+      <div class="card" *ngIf="shouldShowCard('sanctions') && unifiedResults.icij?.q1?.result?.length > 0">
+        <div class="card-header danger">
+          <h3>ICIJ Offshore Leaks</h3>
+          <span class="status-badge danger">HIT</span>
+        </div>
+        <div class="card-content">
+          <div class="icij-item" *ngFor="let item of unifiedResults.icij.q1.result">
+            <strong>{{ item.name }}</strong>
+            <p style="font-size: 0.8rem; color: #ef4444;">Leaked in: {{ item.type[0]?.name }}</p>
+          </div>
         </div>
       </div>
 
@@ -128,6 +155,27 @@
             <div class="name">{{ comp.nom_complet }}</div>
             <div class="siren">SIREN: {{ comp.siren }}</div>
           </div>
+          <div *ngIf="unifiedResults.rbe?.beneficiaires_effectifs?.length > 0" class="rbe-box">
+            <h4>Beneficial Owners (RBE)</h4>
+            <div class="rbe-item" *ngFor="let b of unifiedResults.rbe.beneficiaires_effectifs">
+              <strong>{{ b.prenoms }} {{ b.nom }}</strong>
+              <p style="font-size: 0.75rem;">{{ b.parts_directes }}% direct, {{ b.parts_indirectes }}% indirect</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPENCORPORATES (NEW) -->
+      <div class="card" *ngIf="shouldShowCard('entities')">
+        <div class="card-header">
+          <h3>OpenCorporates (Global)</h3>
+        </div>
+        <div class="card-content">
+          <div class="company-item" *ngFor="let item of unifiedResults.opencorporates?.results?.companies">
+            <div class="name">{{ item.company.name }}</div>
+            <div class="siren">{{ item.company.jurisdiction_code }} • {{ item.company.company_number }}</div>
+          </div>
+          <div *ngIf="unifiedResults.opencorporates?.results?.total_count === 0" class="empty-msg">No global registry entries.</div>
         </div>
       </div>
 
@@ -140,6 +188,13 @@
           <div class="wikidata-item" *ngFor="let item of unifiedResults.wikidata?.search">
             <strong>{{ item.label }}</strong>
             <p style="font-size: 0.8rem; color: #64748b;">{{ item.description }}</p>
+          </div>
+          <div *ngIf="unifiedResults.wikidata_pep?.results?.bindings?.length > 0" class="pep-box">
+            <h4>Politically Exposed Person (PEP) Details</h4>
+            <div class="pep-item" *ngFor="let b of unifiedResults.wikidata_pep.results.bindings">
+              <strong>{{ b.personLabel.value }}</strong>
+              <p style="font-size: 0.75rem; color: #6366f1;">{{ b.positionLabel?.value }}</p>
+            </div>
           </div>
           <div *ngIf="unifiedResults.wikidata?.search?.length === 0" class="empty-msg">No Wikidata records found.</div>
         </div>
