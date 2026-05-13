@@ -9,10 +9,7 @@ const PROXY_CONFIG = {
     "target": "https://ws-public.interpol.int",
     "secure": true,
     "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/interpol": "" },
-    "headers": {
-      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
-    }
+    "pathRewrite": { "^/api-proxy/interpol": "" }
   },
   "/api-proxy/recherche-entreprises": {
     "target": "https://recherche-entreprises.api.gouv.fr",
