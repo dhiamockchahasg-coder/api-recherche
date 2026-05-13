@@ -1,4 +1,4 @@
-{
+const PROXY_CONFIG = {
   "/api-proxy/dilisense": {
     "target": "https://api.dilisense.com",
     "secure": true,
@@ -35,12 +35,6 @@
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/worldbank": "" }
   },
-  "/api-proxy/csl": {
-    "target": "https://api.trade.gov",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/csl": "" }
-  },
   "/api-proxy/wikidata": {
     "target": "https://www.wikidata.org/w",
     "secure": true,
@@ -71,13 +65,21 @@
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/un-sanctions": "" },
-    "followRedirects": true
+    "followRedirects": true,
+    "onProxyRes": function (proxyRes, req, res) {
+      if (proxyRes.statusCode >= 300 && proxyRes.statusCode < 400 && proxyRes.headers.location) {
+        console.log('Redirecting to:', proxyRes.headers.location);
+      }
+    }
   },
   "/api-proxy/fbi": {
     "target": "https://api.fbi.gov",
     "secure": true,
     "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/fbi": "" }
+    "pathRewrite": { "^/api-proxy/fbi": "" },
+    "headers": {
+      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
+    }
   },
   "/api-proxy/aleph": {
     "target": "https://aleph.occrp.org",
@@ -85,4 +87,6 @@
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/aleph": "" }
   }
-}
+};
+
+module.exports = PROXY_CONFIG;

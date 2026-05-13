@@ -1,39 +1,34 @@
 <div class="dashboard-container">
-  <header>
-    <h1>Compliance Intelligence Dashboard</h1>
-    <p>Outil unifié de vigilance LCB-FT et vérification d'identité</p>
+  <header class="main-header">
+    <div class="brand">
+      <span class="logo">🛡️</span>
+      <h1>Compliance Portal</h1>
+    </div>
+    <div class="search-box">
+      <div class="input-group">
+        <input type="text" [(ngModel)]="searchQuery" 
+               placeholder="Search person or company..." 
+               (keyup.enter)="performUnifiedSearch()">
+        <button class="btn-search" (click)="performUnifiedSearch()" [disabled]="loading || !searchQuery">
+          {{ loading ? 'Analyzing...' : 'Search' }}
+        </button>
+      </div>
+    </div>
   </header>
 
-  <div class="search-bar">
-    <div class="input-wrapper">
-      <input type="text" [(ngModel)]="searchQuery" 
-             placeholder="Rechercher un Nom, SIREN ou Entité..." 
-             (keyup.enter)="performUnifiedSearch()">
-      <button class="btn-primary" (click)="performUnifiedSearch()" [disabled]="loading || !searchQuery">
-        {{ loading ? 'Analyse...' : 'Lancer l\'Analyse' }}
-      </button>
+  <!-- OVERALL STATUS -->
+  <div class="risk-overview" *ngIf="status === 'success'">
+    <div class="risk-score-card" [class.high]="overallRiskScore > 50" [class.low]="overallRiskScore <= 50">
+      <div class="score-value">{{ overallRiskScore }}</div>
+      <div class="score-label">Risk Score</div>
     </div>
-    <span class="hint">Sources : EU Sanctions, Interpol, LittleSis, Etalab, Wikidata, World Bank...</span>
-  </div>
-
-  <!-- RISK ASSESSMENT BAR -->
-  <div class="risk-assessment" *ngIf="status === 'success'">
-    <div class="risk-info">
-      <span class="risk-label">Indice de Dangerosité Global</span>
-      <span class="risk-badge" [style.color]="dangerColor">{{ dangerColor }} {{ dangerLevel }}</span>
-    </div>
-    <div class="risk-meter">
-      <div class="bar-background">
-        <div class="bar-fill" [style.width.%]="overallRiskScore" [style.background-color]="dangerColor"></div>
-      </div>
-      <span class="risk-value">{{ overallRiskScore }}/100</span>
-    </div>
-    <div class="risk-text">
-      {{ dangerBar }} Analyse basée sur l'agrégation de 8 sources internationales.
+    <div class="risk-details">
+      <h2>{{ dangerLevel }} Threat Level</h2>
+      <p>Aggregated from {{ (unifiedResults.eu_sanctions?.sources?.length || 0) + 7 }} international sources.</p>
     </div>
   </div>
 
-  <nav class="tabs">
+  <nav class="sub-nav">
     <button *ngFor="let cat of categories" 
             [class.active]="activeCategory === cat.id"
             (click)="activeCategory = cat.id">
@@ -41,130 +36,145 @@
     </button>
   </nav>
 
-  <main class="content">
+  <main class="results-container">
     
-    <!-- RESULTS GRID (DYNAMIC) -->
-    <section class="results-grid">
+    <div class="results-grid" *ngIf="status === 'success'">
       
-      <!-- LITTLESIS / PEP -->
-      <div class="result-card" *ngIf="unifiedResults.littlesis && shouldShowCard('littlesis')">
-        <div class="card-tag sanctions">PEP & Sanctions</div>
-        <h3>LittleSis Entities</h3>
-        <div class="entity-list">
-          <div class="entity-item" *ngFor="let ent of unifiedResults.littlesis.data">
-            <div class="entity-header">
-              <span class="entity-name">{{ ent.attributes.name }}</span>
-              <span class="entity-type">{{ ent.attributes.primary_ext }}</span>
-            </div>
-            <p class="entity-blurb">{{ ent.attributes.blurb }}</p>
-            <div class="entity-tags">
-              <span class="tag" *ngFor="let t of ent.attributes.types">{{ t }}</span>
-            </div>
+      <!-- SANCTIONS & WANTED -->
+      <div class="card" *ngIf="shouldShowCard('eu_sanctions')">
+        <div class="card-header">
+          <h3>Official Sanctions</h3>
+          <span class="status-badge" [class.danger]="unifiedResults.eu_sanctions?.found">
+            {{ unifiedResults.eu_sanctions?.found ? 'HIT FOUND' : 'CLEAN' }}
+          </span>
+        </div>
+        <div class="card-content">
+          <div *ngIf="unifiedResults.eu_sanctions?.found" class="alert-box">
+            <p>Listed on: {{ unifiedResults.eu_sanctions.sources?.join(', ') }}</p>
+          </div>
+          <div *ngIf="!unifiedResults.eu_sanctions?.found" class="success-box">
+            No active sanctions found in UN/EU/FR databases.
           </div>
         </div>
-        <div *ngIf="unifiedResults.littlesis.data.length === 0" class="no-results">Aucun résultat LittleSis.</div>
       </div>
 
-      <!-- ETALAB / COMPANIES -->
-      <div class="result-card" *ngIf="unifiedResults.etalab && shouldShowCard('etalab')">
-        <div class="card-tag companies">Registre Entreprises</div>
-        <h3>Résultats Etalab</h3>
-        <div class="entity-list">
-          <div class="entity-item" *ngFor="let comp of unifiedResults.etalab.results">
-            <div class="entity-header">
-              <span class="entity-name">{{ comp.nom_complet }}</span>
-              <span class="entity-siren">SIREN: {{ comp.siren }}</span>
-            </div>
-            <p class="entity-meta">{{ comp.nature_juridique_label || 'Entreprise' }} • {{ comp.etat_administratif === 'A' ? 'Active' : 'Inactive' }}</p>
-            <div class="dirigeants" *ngIf="comp.dirigeants?.length">
-              <strong>Dirigeants :</strong>
-              <span *ngFor="let d of comp.dirigeants">{{ d.prenoms }} {{ d.nom }} ({{ d.role }})</span>
-            </div>
+      <!-- FBI WANTED (NEW) -->
+      <div class="card" *ngIf="shouldShowCard('fbi')">
+        <div class="card-header">
+          <h3>FBI Wanted List</h3>
+          <span class="status-badge" [class.danger]="unifiedResults.fbi?.total > 0">
+            {{ unifiedResults.fbi?.total > 0 ? 'WANTED' : 'NOT FOUND' }}
+          </span>
+        </div>
+        <div class="card-content">
+          <div class="wanted-item" *ngFor="let item of unifiedResults.fbi?.items">
+            <strong>{{ item.title }}</strong>
+            <p style="font-size: 0.8rem; color: #ef4444;">{{ item.caution || 'See official FBI notice' | slice:0:100 }}...</p>
+            <a [href]="item.url" target="_blank" style="font-size: 0.75rem; color: #6366f1;">View FBI Profile</a>
+          </div>
+          <div *ngIf="unifiedResults.fbi?.total === 0" class="empty-msg">No FBI records found.</div>
+        </div>
+      </div>
+
+      <!-- ALEPH INVESTIGATIONS (NEW) -->
+      <div class="card" *ngIf="shouldShowCard('aleph')">
+        <div class="card-header">
+          <h3>OCCRP Aleph Records</h3>
+        </div>
+        <div class="card-content">
+          <div class="aleph-item" *ngFor="let res of unifiedResults.aleph?.results">
+            <strong>{{ res.name }}</strong>
+            <p style="font-size: 0.8rem; color: #64748b;">{{ res.schema }} • {{ res.collection?.label }}</p>
+          </div>
+          <div *ngIf="unifiedResults.aleph?.total === 0" class="empty-msg">No investigative records found.</div>
+        </div>
+      </div>
+
+      <!-- CORPORATE NETWORK -->
+      <div class="card" *ngIf="shouldShowCard('littlesis')">
+        <div class="card-header">
+          <h3>Corporate Network</h3>
+        </div>
+        <div class="card-content">
+          <div class="officer-item" *ngFor="let ent of unifiedResults.littlesis?.data">
+            <div class="name">{{ ent.attributes?.name }}</div>
+            <div class="role">{{ ent.attributes?.primary_ext }}</div>
+            <p class="blurb" style="font-size: 0.8rem; color: #64748b;">{{ ent.attributes?.blurb }}</p>
+          </div>
+          <div *ngIf="unifiedResults.littlesis?.data?.length === 0" class="empty-msg">No network data found.</div>
+        </div>
+      </div>
+
+      <!-- CRIMINAL MONITORING -->
+      <div class="card" *ngIf="shouldShowCard('interpol')">
+        <div class="card-header">
+          <h3>Interpol Red Notices</h3>
+        </div>
+        <div class="card-content">
+          <div class="wanted-stat">{{ unifiedResults.interpol?.total || 0 }} Notices Found</div>
+          <div class="notice" *ngFor="let notice of unifiedResults.interpol?._embedded?.notices">
+            <strong>{{ notice.name }}</strong>, {{ notice.forename }}
           </div>
         </div>
-        <div *ngIf="unifiedResults.etalab.results.length === 0" class="no-results">Aucune entreprise trouvée.</div>
       </div>
 
-      <!-- INTERPOL -->
-      <div class="result-card" *ngIf="unifiedResults.interpol && shouldShowCard('interpol')">
-        <div class="card-tag criminals">Criminal Monitoring</div>
-        <h3>Interpol Red Notices</h3>
-        <div class="interpol-results">
-          <div class="stat">{{ unifiedResults.interpol.total }} notices trouvées</div>
-          <div class="notice-item" *ngFor="let notice of unifiedResults.interpol._embedded?.notices">
-            <span>{{ notice.name }}, {{ notice.forename }}</span>
+      <!-- ETALAB / FRENCH COMPANIES -->
+      <div class="card" *ngIf="shouldShowCard('etalab')">
+        <div class="card-header">
+          <h3>French Registry (Etalab)</h3>
+        </div>
+        <div class="card-content">
+          <div class="company-item" *ngFor="let comp of unifiedResults.etalab?.results">
+            <div class="name">{{ comp.nom_complet }}</div>
+            <div class="siren">SIREN: {{ comp.siren }}</div>
           </div>
+        </div>
+      </div>
+
+      <!-- WIKIDATA -->
+      <div class="card" *ngIf="shouldShowCard('wikidata')">
+        <div class="card-header">
+          <h3>Wikidata Entities</h3>
+        </div>
+        <div class="card-content">
+          <div class="wikidata-item" *ngFor="let item of unifiedResults.wikidata?.search">
+            <strong>{{ item.label }}</strong>
+            <p style="font-size: 0.8rem; color: #64748b;">{{ item.description }}</p>
+          </div>
+          <div *ngIf="unifiedResults.wikidata?.search?.length === 0" class="empty-msg">No Wikidata records found.</div>
         </div>
       </div>
 
       <!-- WORLD BANK -->
-      <div class="result-card" *ngIf="unifiedResults.worldbank && shouldShowCard('worldbank')">
-        <div class="card-tag debarred">Debarred Lists</div>
-        <h3>World Bank Documents</h3>
-        <div class="wb-list">
-          <div class="wb-item" *ngFor="let doc of unifiedResults.worldbank.documents | keyvalue">
-            <div class="doc-title">{{ doc.value.display_title }}</div>
-            <div class="doc-meta">{{ doc.value.docdt | date }} • {{ doc.value.count }}</div>
+      <div class="card" *ngIf="shouldShowCard('worldbank')">
+        <div class="card-header">
+          <h3>World Bank Documents</h3>
+          <span class="status-badge" [class.danger]="unifiedResults.worldbank?.total > 0">
+            {{ unifiedResults.worldbank?.total > 0 ? 'LISTED' : 'CLEAN' }}
+          </span>
+        </div>
+        <div class="card-content">
+          <div class="wb-item" *ngFor="let doc of unifiedResults.worldbank?.documents | keyvalue">
+            <strong>{{ doc.value.display_title }}</strong>
+            <p style="font-size: 0.8rem; color: #ef4444;">{{ doc.value.docdt | slice:0:10 }}</p>
           </div>
+          <div *ngIf="unifiedResults.worldbank?.total === 0" class="empty-msg">No World Bank records found.</div>
         </div>
       </div>
 
-      <!-- EU SANCTIONS -->
-      <div class="result-card" *ngIf="unifiedResults.eu_sanctions && shouldShowCard('eu_sanctions')">
-        <div class="card-tag csl">Global Sanctions (EU/UN)</div>
-        <h3>EU & UN Sanctions List</h3>
-        <div class="entity-list">
-          <div class="entity-item" *ngIf="unifiedResults.eu_sanctions.found">
-            <div class="entity-header">
-              <span class="entity-name">{{ unifiedResults.eu_sanctions.query.name }}</span>
-              <span class="entity-source">HIT DETECTED</span>
-            </div>
-            <p class="entity-meta">Sources: {{ unifiedResults.eu_sanctions.sources?.join(', ') }}</p>
-            <div class="danger-alert">🔴 Cet individu est sous sanctions internationales.</div>
-          </div>
-          <div *ngIf="!unifiedResults.eu_sanctions.found" class="no-results">Aucune sanction active trouvée dans la base EU/UN.</div>
-        </div>
-      </div>
+    </div>
 
-      <div class="result-card" *ngIf="unifiedResults.wikidata && shouldShowCard('wikidata')">
-        <div class="card-tag world">Wikidata Public Figure</div>
-        <h3>Résultats Wikidata</h3>
-        <div class="entity-list">
-          <div class="entity-item" *ngFor="let item of unifiedResults.wikidata.search">
-            <div class="entity-header">
-              <span class="entity-name">{{ item.label }}</span>
-            </div>
-            <p class="entity-meta">{{ item.description || 'Personne Publique / PEP' }}</p>
-            <a [href]="item.concepturi" target="_blank" class="source-link">Lien Wikidata</a>
-          </div>
-        </div>
-        <div *ngIf="unifiedResults.wikidata.search?.length === 0" class="no-results">Aucun personnage public trouvé.</div>
-      </div>
+    <!-- LOADING STATE -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Scanning global investigative databases...</p>
+    </div>
 
-      <!-- PLACEHOLDER / LOADING -->
-      <div class="loading-full" *ngIf="loading">
-        <div class="loader-circle"></div>
-        <p>Interrogation des bases de données mondiales...</p>
-      </div>
-
-      <div class="empty-state-full" *ngIf="!loading && !unifiedResults.littlesis && !unifiedResults.etalab">
-        <div class="icon">🔍</div>
-        <h2>En attente de recherche</h2>
-        <p>Entrez un nom ou un identifiant pour lancer l'audit de conformité.</p>
-      </div>
-
-    </section>
-
-    <!-- RAW JSON DRAWER (OPTIONAL) -->
-    <aside class="raw-data" [class.open]="showRaw">
-      <div class="raw-header" (click)="showRaw = !showRaw">
-        <span>Données Brutes (JSON)</span>
-        <button class="btn-toggle">{{ showRaw ? '−' : '+' }}</button>
-      </div>
-      <div class="raw-body" *ngIf="showRaw">
-        <pre>{{ unifiedResults | json }}</pre>
-      </div>
-    </aside>
+    <!-- EMPTY STATE -->
+    <div class="empty-state" *ngIf="status === 'idle'">
+      <h2>Global Intelligence Check</h2>
+      <p>Search across FBI, UN, EU, OCCRP, and national registries instantly.</p>
+    </div>
 
   </main>
 </div>

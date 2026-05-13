@@ -80,20 +80,33 @@ function getRiskMetadata(score) {
  */
 
 async function fetchEU_Sanctions(name) {
-    // EU Consolidated Sanctions List Search (using Dilisense as primary proxy for speed, 
-    // or direct webgate if preferred. Here we use a robust search pattern).
-    const url = `https://dilisense.com/api/v1/check?name=${encodeURIComponent(name)}`;
+    const urls = [
+        `https://api.dilisense.com/v1/checkIndividual?names=${encodeURIComponent(name)}`,
+        `https://api.dilisense.com/v1/checkEntity?names=${encodeURIComponent(name)}`
+    ];
+    
     try {
-        const response = await fetch(url, { signal: AbortSignal.timeout(environment.apiTimeout) });
-        if (!response.ok) return [];
-        const data = await response.json();
-        return (data.found ? [{
-            source: 'EU/UN Sanctions',
-            name: data.query.name,
-            type: 'Sanctioned Entity',
-            severity: 100,
-            details: `Sources: ${data.sources.join(', ')}`
-        }] : []);
+        const headers = environment.dilisenseApiKey ? { 'x-api-key': environment.dilisenseApiKey } : {};
+        const responses = await Promise.allSettled(
+            urls.map(url => fetch(url, { headers, signal: AbortSignal.timeout(environment.apiTimeout) }))
+        );
+
+        let finalHits = [];
+        for (const res of responses) {
+            if (res.status === 'fulfilled' && res.value.ok) {
+                const data = await res.value.json();
+                if (data.found) {
+                    finalHits.push({
+                        source: 'EU/UN Sanctions',
+                        name: data.query.name,
+                        type: 'Sanctioned Entity/Individual',
+                        severity: 100,
+                        details: `Sources: ${data.sources.join(', ')}`
+                    });
+                }
+            }
+        }
+        return finalHits;
     } catch (e) {
         return [];
     }

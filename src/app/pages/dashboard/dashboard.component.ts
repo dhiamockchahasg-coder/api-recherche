@@ -60,7 +60,9 @@ export class DashboardComponent implements OnDestroy {
       interpol: this.compliance.searchInterpol(this.searchQuery),
       worldbank: this.compliance.searchWorldBank(this.searchQuery),
       eu_sanctions: this.compliance.searchEU_Sanctions(this.searchQuery),
-      wikidata: this.compliance.searchWikidata(this.searchQuery)
+      wikidata: this.compliance.searchWikidata(this.searchQuery),
+      fbi: this.compliance.searchFBI(this.searchQuery),
+      aleph: this.compliance.searchAleph(this.searchQuery)
     };
 
     forkJoin(requests).pipe(
@@ -71,6 +73,15 @@ export class DashboardComponent implements OnDestroy {
       })
     ).subscribe(results => {
       this.unifiedResults = results;
+      
+      // DEEP DIVE: If LittleSis found entities, check their relationships
+      if (results.littlesis?.data?.length > 0) {
+        const topEntity = results.littlesis.data[0];
+        this.compliance.searchAssociates(String(topEntity.id)).subscribe(rels => {
+          this.unifiedResults.relationships = rels.data || [];
+          this.calculateRisk(); // Recalculate with new relationship data
+        });
+      }
     });
   }
 
@@ -84,6 +95,16 @@ export class DashboardComponent implements OnDestroy {
     if (r.littlesis?.data?.length > 0) maxRisk = Math.max(maxRisk, 40);
     if (r.wikidata?.search?.length > 0) maxRisk = Math.max(maxRisk, 30);
     if (r.etalab?.total_results > 0) maxRisk = Math.max(maxRisk, 20);
+    if (r.fbi?.total > 0) maxRisk = Math.max(maxRisk, 95);
+    if (r.aleph?.total > 0) maxRisk = Math.max(maxRisk, 50);
+
+    // ESCALATION: If relationships are found with suspicious titles
+    if (r.relationships?.length > 0) {
+      const suspicious = r.relationships.some((rel: any) => 
+        /sanction|criminal|illegal|court|lawsuit/i.test(rel.attributes?.description || '')
+      );
+      if (suspicious) maxRisk = Math.max(maxRisk, 60);
+    }
 
     this.overallRiskScore = maxRisk;
     
@@ -118,10 +139,10 @@ export class DashboardComponent implements OnDestroy {
   shouldShowCard(type: string): boolean {
     if (this.activeCategory === 'unified') return true;
     if (this.activeCategory === 'sanctions') {
-      return ['littlesis', 'interpol', 'eu_sanctions'].includes(type);
+      return ['littlesis', 'interpol', 'eu_sanctions', 'fbi', 'aleph'].includes(type);
     }
     if (this.activeCategory === 'entities') {
-      return ['etalab', 'worldbank'].includes(type);
+      return ['etalab', 'worldbank', 'littlesis'].includes(type);
     }
     if (this.activeCategory === 'world') {
       return ['wikidata', 'worldbank'].includes(type);

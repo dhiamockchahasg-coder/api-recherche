@@ -93,3 +93,18 @@ export interface OpenCorporatesResponse {
     }>
   }
 }
+
+export interface GelAvoirsPerson {
+  id: string;
+  nom: string;
+  prenom: string;
+  date_naissance?: string;
+  lieu_naissance?: string;
+  nationalite?: string;
+  fondement_juridique?: string;
+  motif?: string;
+}
+
+export interface GelAvoirsResponse {
+  publications: GelAvoirsPerson[];
+}
