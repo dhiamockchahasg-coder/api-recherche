@@ -73,6 +73,16 @@ export class ComplianceService {
   searchLittleSis(query: string): Observable<LittleSisResponse> {
     return this.http.get<LittleSisResponse>(this.endpoints.littlesis, { params: { q: query } }).pipe(
       timeout(environment.apiTimeout),
+      map(res => ({
+        data: this.filterRelevant(res.data || [], query, 'name')
+          .map(item => ({
+            ...item,
+            attributes: {
+              ...item.attributes,
+              blurb: this.cleanString(item.attributes?.blurb)
+            }
+          }))
+      })),
       catchError(() => of({ data: [] }))
     );
   }
@@ -81,6 +91,10 @@ export class ComplianceService {
     const params = new HttpParams().set('q', query).set('per_page', '5').set('minimal', 'True');
     return this.http.get<EtalabResponse>(this.endpoints.etalab, { params }).pipe(
       timeout(environment.apiTimeout),
+      map(res => ({
+        ...res,
+        results: (res.results || []).slice(0, 5)
+      })),
       catchError(() => of({ results: [], total_results: 0 }))
     );
   }
@@ -88,6 +102,16 @@ export class ComplianceService {
   searchInterpol(name: string): Observable<InterpolResponse> {
     return this.http.get<InterpolResponse>(this.endpoints.interpol, { params: { name } }).pipe(
       timeout(environment.apiTimeout),
+      map(res => ({
+        total: res.total || 0,
+        _embedded: {
+          notices: (res._embedded?.notices || []).slice(0, 5).map(n => ({
+            ...n,
+            name: this.cleanString(n.name),
+            forename: this.cleanString(n.forename)
+          }))
+        }
+      })),
       catchError(() => of({ total: 0, _embedded: { notices: [] } }))
     );
   }
@@ -96,6 +120,14 @@ export class ComplianceService {
     const params = new HttpParams().set('title', query);
     return this.http.get<any>(this.endpoints.fbi_wanted, { params }).pipe(
       timeout(environment.apiTimeout),
+      map(res => ({
+        total: res.total || 0,
+        items: (res.items || []).slice(0, 5).map((item: any) => ({
+          ...item,
+          title: this.cleanString(item.title),
+          caution: this.cleanString(item.caution)
+        }))
+      })),
       catchError(() => of({ total: 0, items: [] }))
     );
   }
@@ -109,6 +141,13 @@ export class ComplianceService {
 
     return this.http.get<any>(this.endpoints.wikidata, { params }).pipe(
       timeout(environment.apiTimeout),
+      map(res => ({
+        search: (res.search || []).slice(0, 5).map((s: any) => ({
+          ...s,
+          label: this.cleanString(s.label),
+          description: this.cleanString(s.description)
+        }))
+      })),
       catchError(() => of({ search: [] }))
     );
   }
@@ -154,6 +193,19 @@ export class ComplianceService {
     const params = new HttpParams().set('qterm', query).set('format', 'json');
     return this.http.get<WorldBankResponse>(this.endpoints.worldbank, { params }).pipe(
       timeout(environment.apiTimeout),
+      map(res => {
+        const docs: { [key: string]: any } = {};
+        Object.entries(res.documents || {}).slice(0, 5).forEach(([key, doc]) => {
+          docs[key] = {
+            ...doc,
+            display_title: this.cleanString(doc.display_title)
+          };
+        });
+        return {
+          total: res.total || 0,
+          documents: docs
+        };
+      }),
       catchError(() => of({ total: 0, documents: {} }))
     );
   }
@@ -162,6 +214,13 @@ export class ComplianceService {
     const params = new HttpParams().set('q', query);
     return this.http.get<any>(this.endpoints.sec_search, { params }).pipe(
       timeout(15000),
+      map(res => ({
+        ...res,
+        hits: {
+          ...res.hits,
+          hits: (res.hits?.hits || []).slice(0, 5)
+        }
+      })),
       catchError(() => of({ hits: { hits: [] } }))
     );
   }
@@ -170,8 +229,26 @@ export class ComplianceService {
     const params = new HttpParams().set('filter[entity.legalName]', query);
     return this.http.get<any>(this.endpoints.gleif, { params }).pipe(
       timeout(15000),
+      map(res => ({
+        ...res,
+        data: (res.data || []).slice(0, 5)
+      })),
       catchError(() => of({ data: [] }))
     );
   }
 
+  private cleanString(str: string): string {
+    if (!str) return '';
+    return str.replace(/<[^>]*>/g, '').trim();
+  }
+
+  private filterRelevant(items: any[], query: string, field: string): any[] {
+    const q = query.toLowerCase();
+    return items
+      .filter(item => {
+        const val = (item[field] || item.attributes?.[field] || '').toLowerCase();
+        return val.includes(q);
+      })
+      .slice(0, 5);
+  }
 }
