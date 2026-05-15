@@ -14,6 +14,7 @@ export interface InterpolResponse {
   };
 }
 
+
 export interface EtalabEntreprise {
   siren: string;
   nom_complet: string;
@@ -56,13 +57,12 @@ export class ComplianceService {
     littlesis: '/api-proxy/littlesis/api/entities/search',
     etalab: '/api-proxy/recherche-entreprises/search',
     interpol: '/api-proxy/interpol/notices/v1/red',
-    worldbank: '/api-proxy/worldbank/api/v3/wds',
+
+    worldbank: '/api-proxy/worldbank/api/v2/wds',
     wikidata: '/api-proxy/wikidata/api.php',
     littlesis_rels: '/api-proxy/littlesis/api/entities',
     fbi_wanted: '/api-proxy/fbi/wanted/v1/list',
-    aleph: '/api-proxy/aleph/api/2/entities',
     wikidata_sparql: '/api-proxy/wikidata-sparql/sparql',
-    openfda: '/api-proxy/openfda/drug/enforcement.json',
     sec_search: '/api-proxy/sec/LATEST/search-index',
     gleif: '/api-proxy/gleif/api/v1/lei-records'
   };
@@ -86,45 +86,9 @@ export class ComplianceService {
   }
 
   searchInterpol(name: string): Observable<InterpolResponse> {
-    // Interpol API is sensitive; headers are handled by proxy.conf.js
     return this.http.get<InterpolResponse>(this.endpoints.interpol, { params: { name } }).pipe(
       timeout(environment.apiTimeout),
       catchError(() => of({ total: 0, _embedded: { notices: [] } }))
-    );
-  }
-
-  searchWorldBank(query: string): Observable<WorldBankResponse> {
-    const params = new HttpParams().set('qterm', query).set('format', 'json');
-    return this.http.get<WorldBankResponse>(this.endpoints.worldbank, { params }).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ total: 0, documents: {} }))
-    );
-  }
-
-  searchGlobalSanctions(query: string): Observable<any> {
-    // Simplified: Focus on World Bank and Interpol as primary global sources
-    return forkJoin({
-      worldbank: this.searchWorldBank(query),
-      interpol: this.searchInterpol(query)
-    }).pipe(
-      map(res => {
-        const found = (res.worldbank.total > 0) || (res.interpol.total > 0);
-        const sources = [
-          ...(res.worldbank.total > 0 ? ['World Bank Debarred List'] : []),
-          ...(res.interpol.total > 0 ? ['Interpol Red Notices'] : [])
-        ];
-
-        return {
-          found,
-          query,
-          sources: [...new Set(sources)],
-          details: res
-        };
-      }),
-      catchError(err => {
-        console.error('Global Sanctions Error:', err);
-        return of({ found: false, sources: [], details: {} });
-      })
     );
   }
 
@@ -133,14 +97,6 @@ export class ComplianceService {
     return this.http.get<any>(this.endpoints.fbi_wanted, { params }).pipe(
       timeout(environment.apiTimeout),
       catchError(() => of({ total: 0, items: [] }))
-    );
-  }
-
-  searchAleph(query: string): Observable<any> {
-    const params = new HttpParams().set('q', query).set('limit', '5');
-    return this.http.get<any>(this.endpoints.aleph, { params }).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ total: 0, results: [] }))
     );
   }
 
@@ -172,8 +128,13 @@ export class ComplianceService {
   searchWikidataPEP(query: string): Observable<any> {
     const sparql = `
       SELECT ?person ?personLabel ?positionLabel WHERE {
-        ?person wdt:P31 wd:Q5.
-        ?person ?labelProp "${query}"@en.
+        SERVICE wikibase:mwapi {
+            bd:serviceParam wikibase:api "EntitySearch" .
+            bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+            bd:serviceParam mwapi:search "${query}" .
+            bd:serviceParam mwapi:language "en" .
+            ?person wikibase:apiOutputItem mwapi:item .
+        }
         ?person p:P39 ?statement.
         ?statement ps:P39 ?position.
         ?position wdt:P279* wd:Q22631.
@@ -187,11 +148,13 @@ export class ComplianceService {
     );
   }
 
-  searchOpenFDA(query: string): Observable<any> {
-    const params = new HttpParams().set('search', `recalling_firm:"${query}"`).set('limit', '5');
-    return this.http.get<any>(this.endpoints.openfda, { params }).pipe(
-      timeout(15000),
-      catchError(() => of({ results: [] }))
+
+
+  searchWorldBank(query: string): Observable<WorldBankResponse> {
+    const params = new HttpParams().set('qterm', query).set('format', 'json');
+    return this.http.get<WorldBankResponse>(this.endpoints.worldbank, { params }).pipe(
+      timeout(environment.apiTimeout),
+      catchError(() => of({ total: 0, documents: {} }))
     );
   }
 

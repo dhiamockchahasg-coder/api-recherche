@@ -54,26 +54,8 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
       {{ cat.label }}
     </button>
   </nav>
-
   <main class="results-container">
     <div class="results-grid" *ngIf="status === 'success'">
-      <div class="card" *ngIf="shouldShowCard('global_sanctions')">
-        <div class="card-header">
-          <h3>Official Sanctions</h3>
-          <span class="status-badge" [class.danger]="unifiedResults.global_sanctions?.found">
-            {{ unifiedResults.global_sanctions?.found ? 'HIT FOUND' : 'CLEAN' }}
-          </span>
-        </div>
-        <div class="card-content">
-          <div *ngIf="unifiedResults.global_sanctions?.found" class="alert-box">
-            <p>Listed on: {{ unifiedResults.global_sanctions.sources?.join(', ') }}</p>
-          </div>
-          <div *ngIf="!unifiedResults.global_sanctions?.found" class="success-box">
-            No active sanctions found in World Bank or Interpol databases.
-          </div>
-        </div>
-      </div>
-
       <div class="card" *ngIf="shouldShowCard('fbi')">
         <div class="card-header">
           <h3>FBI Wanted List</h3>
@@ -91,18 +73,23 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
         </div>
       </div>
 
-      <div class="card" *ngIf="shouldShowCard('aleph')">
+      <div class="card" *ngIf="shouldShowCard('interpol')">
         <div class="card-header">
-          <h3>OCCRP Aleph Records</h3>
+          <h3>Interpol Red Notices</h3>
+          <span class="status-badge" [class.danger]="unifiedResults.interpol?.total > 0">
+            {{ unifiedResults.interpol?.total > 0 ? 'HIT FOUND' : 'CLEAN' }}
+          </span>
         </div>
         <div class="card-content">
-          <div class="aleph-item" *ngFor="let res of unifiedResults.aleph?.results">
-            <strong>{{ res.name }}</strong>
-            <p style="font-size: 0.8rem; color: #64748b;">{{ res.schema }} • {{ res.collection?.label }}</p>
+          <div class="wanted-stat">{{ unifiedResults.interpol?.total || 0 }} Notices Found</div>
+          <div class="notice" *ngFor="let notice of unifiedResults.interpol?._embedded?.notices">
+            <strong>{{ notice.name }}</strong>, {{ notice.forename }}
           </div>
-          <div *ngIf="unifiedResults.aleph?.total === 0" class="empty-msg">No investigative records found.</div>
+          <div *ngIf="unifiedResults.interpol?.total === 0" class="empty-msg">No Interpol notices found.</div>
         </div>
       </div>
+
+
 
       <div class="card" *ngIf="shouldShowCard('littlesis')">
         <div class="card-header">
@@ -115,18 +102,6 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
             <p class="blurb" style="font-size: 0.8rem; color: #64748b;">{{ ent.attributes?.blurb }}</p>
           </div>
           <div *ngIf="unifiedResults.littlesis?.data?.length === 0" class="empty-msg">No network data found.</div>
-        </div>
-      </div>
-
-      <div class="card" *ngIf="shouldShowCard('interpol')">
-        <div class="card-header">
-          <h3>Interpol Red Notices</h3>
-        </div>
-        <div class="card-content">
-          <div class="wanted-stat">{{ unifiedResults.interpol?.total || 0 }} Notices Found</div>
-          <div class="notice" *ngFor="let notice of unifiedResults.interpol?._embedded?.notices">
-            <strong>{{ notice.name }}</strong>, {{ notice.forename }}
-          </div>
         </div>
       </div>
 
@@ -177,22 +152,6 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
           <div *ngIf="unifiedResults.worldbank?.total === 0" class="empty-msg">No World Bank records found.</div>
         </div>
       </div>
-      <div class="card" *ngIf="shouldShowCard('openfda')">
-        <div class="card-header">
-          <h3>FDA Enforcement</h3>
-          <span class="status-badge" [class.danger]="unifiedResults.openfda?.results?.length > 0">
-            {{ unifiedResults.openfda?.results?.length > 0 ? 'WARNING' : 'CLEAN' }}
-          </span>
-        </div>
-        <div class="card-content">
-          <div class="fda-item" *ngFor="let item of unifiedResults.openfda?.results | slice:0:3" style="margin-bottom: 1rem;">
-            <strong>{{ $any(item).recalling_firm }}</strong>
-            <p style="font-size: 0.8rem; color: #ef4444; margin: 0.25rem 0;">{{ $any(item).reason_for_recall }}</p>
-            <span style="font-size: 0.75rem; color: #64748b;">{{ $any(item).status }} - {{ $any(item).classification }}</span>
-          </div>
-          <div *ngIf="!unifiedResults.openfda?.results?.length" class="empty-msg">No FDA enforcement records found.</div>
-        </div>
-      </div>
 
       <div class="card" *ngIf="shouldShowCard('sec')">
         <div class="card-header">
@@ -225,6 +184,7 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
       </div>
     </div>
 
+
     <div class="loading-state" *ngIf="loading">
       <div class="spinner"></div>
       <p>Scanning global investigative databases...</p>
@@ -232,7 +192,7 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
 
     <div class="empty-state" *ngIf="status === 'idle'">
       <h2>Global Intelligence Check</h2>
-      <p>Search across FBI, Interpol, World Bank, OCCRP, and national registries instantly.</p>
+      <p>Search across FBI, Interpol, World Bank, and national registries instantly.</p>
     </div>
   </main>
 </div>
@@ -276,29 +236,64 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
 .sub-nav button { background: transparent; border: none; padding: 0.5rem 1rem; color: var(--text-muted); font-weight: 600; cursor: pointer; border-radius: 6px; }
 .sub-nav button.active { color: var(--primary); background: #eff6ff; }
 .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
-.card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
-.card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.card-header h3 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-dark); }
+.card { 
+  background: rgba(255, 255, 255, 0.8); 
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3); 
+  border-radius: 20px; 
+  overflow: hidden; 
+  display: flex; 
+  flex-direction: column; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.card:hover { 
+  transform: translateY(-5px); 
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.card-header { 
+  padding: 1.5rem; 
+  border-bottom: 1px solid var(--border); 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  background: linear-gradient(to right, rgba(99, 102, 241, 0.05), transparent);
+}
+.card-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-dark); letter-spacing: -0.025em; }
 .card-content { padding: 1.5rem; flex: 1; }
-.status-badge { padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 700; background: #f1f5f9; }
-.status-badge.danger { background: #fee2e2; color: #ef4444; }
-.officer-item, .company-item { padding: 1rem 0; border-bottom: 1px solid #f1f5f9; }
-.alert-box { background: #fff1f2; border: 1px solid #fecdd3; padding: 1rem; border-radius: 8px; color: #be123c; font-weight: 600; font-size: 0.9rem; }
-.success-box { background: #f0fdf4; border: 1px solid #dcfce7; padding: 1rem; border-radius: 8px; color: #15803d; font-size: 0.9rem; }
-.loading-state, .empty-state { text-align: center; padding: 5rem 0; }
-.spinner { width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; margin: 0 auto 1rem; animation: spin 0.8s linear infinite; }
+.status-badge { padding: 0.4rem 1rem; border-radius: 12px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; background: #f1f5f9; }
+.status-badge.danger { background: #fee2e2; color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
+.status-badge.success { background: #dcfce7; color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+.officer-item, .company-item, .sec-item, .gleif-item { 
+  padding: 1rem; 
+  margin-bottom: 0.75rem; 
+  border-radius: 12px; 
+  background: rgba(248, 250, 252, 0.5); 
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.officer-item:hover, .company-item:hover, .sec-item:hover, .gleif-item:hover {
+  background: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.alert-box { background: #fff1f2; border-left: 4px solid var(--danger); padding: 1rem 1.5rem; border-radius: 8px; color: #be123c; font-weight: 600; font-size: 0.95rem; }
+.success-box { background: #f0fdf4; border-left: 4px solid var(--success); padding: 1rem 1.5rem; border-radius: 8px; color: #15803d; font-size: 0.95rem; }
+.loading-state, .empty-state { text-align: center; padding: 6rem 2rem; }
+.spinner { width: 48px; height: 48px; border: 4px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; margin: 0 auto 1.5rem; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.risk-factors { list-style: none; padding: 0; margin: 0.5rem 0; }
-.risk-factors li { font-size: 0.85rem; color: var(--text-dark); padding: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; }
-.risk-factors li::before { content: "•"; color: var(--danger); font-weight: bold; }
-.alert-badges { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-.badge { padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
+.risk-factors { list-style: none; padding: 0; margin: 1rem 0; }
+.risk-factors li { font-size: 0.9rem; color: var(--text-dark); padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; }
+.risk-factors li::before { content: "⚠️"; font-size: 1rem; }
+.alert-badges { display: flex; gap: 0.75rem; margin-top: 1rem; }
+.badge { padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
 .badge.pep { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; }
-.pep-box { margin-top: 1.5rem; padding-top: 1rem; border-top: 2px dashed var(--border); }
-.pep-box h4 { margin: 0 0 0.75rem 0; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
-.pep-item { background: var(--bg); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; }
-.pep-item strong { display: block; font-size: 0.9rem; }
-.empty-msg { color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
+.pep-box { margin-top: 2rem; padding-top: 1.5rem; border-top: 2px dashed var(--border); }
+.pep-box h4 { margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.pep-item { background: #ffffff; padding: 1rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.pep-item strong { display: block; font-size: 1rem; color: var(--text-dark); }
+.empty-msg { color: var(--text-muted); font-size: 0.9rem; font-style: italic; text-align: center; padding: 2rem 0; }
+.wanted-stat { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem; text-align: center; }
   `
 })
 export class DashboardComponent implements OnDestroy {
@@ -311,7 +306,7 @@ export class DashboardComponent implements OnDestroy {
   lastApi = '';
   elapsedTime = 0;
   showRaw = false;
-  
+
   unifiedResults: any = {};
   overallRiskScore = 0;
   dangerLevel = 'Minimal';
@@ -336,7 +331,7 @@ export class DashboardComponent implements OnDestroy {
 
   performUnifiedSearch() {
     if (!this.searchQuery) return;
-    
+
     this.reset();
     this.status = 'loading';
     this.startTimer();
@@ -346,13 +341,11 @@ export class DashboardComponent implements OnDestroy {
       littlesis: this.compliance.searchLittleSis(this.searchQuery),
       etalab: this.compliance.searchEtalab(this.searchQuery),
       interpol: this.compliance.searchInterpol(this.searchQuery),
+
       worldbank: this.compliance.searchWorldBank(this.searchQuery),
-      global_sanctions: this.compliance.searchGlobalSanctions(this.searchQuery),
       wikidata: this.compliance.searchWikidata(this.searchQuery),
       wikidata_pep: this.compliance.searchWikidataPEP(this.searchQuery),
       fbi: this.compliance.searchFBI(this.searchQuery),
-      aleph: this.compliance.searchAleph(this.searchQuery),
-      openfda: this.compliance.searchOpenFDA(this.searchQuery),
       sec: this.compliance.searchSEC(this.searchQuery),
       gleif: this.compliance.searchGLEIF(this.searchQuery)
     };
@@ -366,7 +359,7 @@ export class DashboardComponent implements OnDestroy {
     ).subscribe(results => {
       console.log('Search Results:', results);
       this.unifiedResults = results;
-      
+
       // DEEP DIVE: If LittleSis found entities, check their relationships
       if (results.littlesis?.data?.length > 0) {
         const topEntity = results.littlesis.data[0];
@@ -383,17 +376,13 @@ export class DashboardComponent implements OnDestroy {
     const r = this.unifiedResults;
     const factors: string[] = [];
 
-    // CRITICAL: Official Sanctions
-    if (r.global_sanctions?.found) {
-      score = Math.max(score, 100);
-      factors.push('Direct match in Global Sanctions lists (World Bank/Interpol)');
-    }
-
     // HIGH: Interpol & FBI
     if (r.interpol?.total > 0) {
       score = Math.max(score, 100);
       factors.push('Active Interpol Red Notice detected');
     }
+
+
     if (r.fbi?.total > 0) {
       score = Math.max(score, 95);
       factors.push('Subject found on FBI Wanted list');
@@ -406,21 +395,13 @@ export class DashboardComponent implements OnDestroy {
       factors.push('Politically Exposed Person (PEP) identified');
     }
 
-    // MEDIUM: World Bank Debarred & OpenFDA
+    // MEDIUM: World Bank Debarred
     if (r.worldbank?.total > 0) {
       score = Math.max(score, 80);
-      factors.push('Found in World Bank Debarred list');
-    }
-    if (r.openfda?.results?.length > 0) {
-      score = Math.max(score, 60);
-      factors.push('Subject to FDA enforcement/recall actions');
+      factors.push('Found in World Bank Documents/Debarred list');
     }
 
-    // MEDIUM: Investigative Records (Aleph, LittleSis)
-    if (r.aleph?.total > 0) {
-      score = Math.max(score, 50);
-      factors.push('Mentioned in investigative reporting (Aleph/OCCRP)');
-    }
+    // MEDIUM: Investigative Records (LittleSis)
     if (r.littlesis?.data?.length > 0) {
       score = Math.max(score, 40);
       factors.push('Subject of corporate influence tracking (LittleSis)');
@@ -439,7 +420,7 @@ export class DashboardComponent implements OnDestroy {
 
     // ESCALATION: Indirect Links
     if (r.relationships?.length > 0) {
-      const suspicious = r.relationships.some((rel: any) => 
+      const suspicious = r.relationships.some((rel: any) =>
         /sanction|criminal|illegal|court|lawsuit|money|laundry/i.test(rel.attributes?.description || '')
       );
       if (suspicious) {
@@ -450,7 +431,7 @@ export class DashboardComponent implements OnDestroy {
 
     this.overallRiskScore = score;
     this.riskFactors = [...new Set(factors)];
-    
+
     if (score > 80) { this.dangerLevel = 'CRITICAL'; this.dangerColor = '🔴'; }
     else if (score > 50) { this.dangerLevel = 'Elevated'; this.dangerColor = '🟠'; }
     else if (score > 20) { this.dangerLevel = 'Low'; this.dangerColor = '🟡'; }
@@ -483,7 +464,7 @@ export class DashboardComponent implements OnDestroy {
   shouldShowCard(type: string): boolean {
     if (this.activeCategory === 'unified') return true;
     if (this.activeCategory === 'sanctions') {
-      return ['littlesis', 'interpol', 'global_sanctions', 'fbi', 'aleph', 'openfda'].includes(type);
+      return ['littlesis', 'interpol', 'fbi'].includes(type);
     }
     if (this.activeCategory === 'entities') {
       return ['etalab', 'worldbank', 'littlesis', 'sec', 'gleif'].includes(type);

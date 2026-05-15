@@ -10,6 +10,7 @@ const PROXY_CONFIG = {
       "Referer": "https://www.interpol.int/"
     }
   },
+
   "/api-proxy/recherche-entreprises": {
     "target": "https://recherche-entreprises.api.gouv.fr",
     "secure": true,
@@ -49,12 +50,7 @@ const PROXY_CONFIG = {
       "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
     }
   },
-  "/api-proxy/aleph": {
-    "target": "https://aleph.occrp.org",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/aleph": "" }
-  },
+
   "/api-proxy/wikidata-sparql": {
     "target": "https://query.wikidata.org",
     "secure": true,
@@ -65,12 +61,7 @@ const PROXY_CONFIG = {
       "Accept": "application/sparql-results+json"
     }
   },
-  "/api-proxy/openfda": {
-    "target": "https://api.fda.gov",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/openfda": "" }
-  },
+
   "/api-proxy/sec": {
     "target": "https://efts.sec.gov",
     "secure": true,
