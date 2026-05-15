@@ -177,6 +177,52 @@ type TestStatus = 'idle' | 'loading' | 'success' | 'error';
           <div *ngIf="unifiedResults.worldbank?.total === 0" class="empty-msg">No World Bank records found.</div>
         </div>
       </div>
+      <div class="card" *ngIf="shouldShowCard('openfda')">
+        <div class="card-header">
+          <h3>FDA Enforcement</h3>
+          <span class="status-badge" [class.danger]="unifiedResults.openfda?.results?.length > 0">
+            {{ unifiedResults.openfda?.results?.length > 0 ? 'WARNING' : 'CLEAN' }}
+          </span>
+        </div>
+        <div class="card-content">
+          <div class="fda-item" *ngFor="let item of unifiedResults.openfda?.results | slice:0:3" style="margin-bottom: 1rem;">
+            <strong>{{ $any(item).recalling_firm }}</strong>
+            <p style="font-size: 0.8rem; color: #ef4444; margin: 0.25rem 0;">{{ $any(item).reason_for_recall }}</p>
+            <span style="font-size: 0.75rem; color: #64748b;">{{ $any(item).status }} - {{ $any(item).classification }}</span>
+          </div>
+          <div *ngIf="!unifiedResults.openfda?.results?.length" class="empty-msg">No FDA enforcement records found.</div>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="shouldShowCard('sec')">
+        <div class="card-header">
+          <h3>SEC EDGAR Filings</h3>
+        </div>
+        <div class="card-content">
+          <div class="sec-item" *ngFor="let hit of $any(unifiedResults.sec?.hits?.hits) | slice:0:3" style="margin-bottom: 1rem;">
+            <strong>{{ $any(hit)._source?.display_names?.[0] }}</strong>
+            <p style="font-size: 0.8rem; color: #64748b; margin: 0.25rem 0;">CIK: {{ $any(hit)._id }}</p>
+          </div>
+          <div *ngIf="!unifiedResults.sec?.hits?.hits?.length" class="empty-msg">No SEC registrations found.</div>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="shouldShowCard('gleif')">
+        <div class="card-header">
+          <h3>Global LEI Record</h3>
+          <span class="status-badge" [class.success]="unifiedResults.gleif?.data?.length > 0">
+            {{ unifiedResults.gleif?.data?.length > 0 ? 'VERIFIED' : 'NOT FOUND' }}
+          </span>
+        </div>
+        <div class="card-content">
+          <div class="gleif-item" *ngFor="let lei of $any(unifiedResults.gleif?.data) | slice:0:3" style="margin-bottom: 1rem;">
+            <strong>{{ $any(lei).attributes?.entity?.legalName?.name }}</strong>
+            <p style="font-size: 0.8rem; color: #64748b; margin: 0.25rem 0;">LEI: {{ $any(lei).attributes?.lei }}</p>
+            <span style="font-size: 0.75rem; color: #10b981;">Jurisdiction: {{ $any(lei).attributes?.entity?.legalAddress?.country }}</span>
+          </div>
+          <div *ngIf="!unifiedResults.gleif?.data?.length" class="empty-msg">No GLEIF records found.</div>
+        </div>
+      </div>
     </div>
 
     <div class="loading-state" *ngIf="loading">
@@ -305,7 +351,10 @@ export class DashboardComponent implements OnDestroy {
       wikidata: this.compliance.searchWikidata(this.searchQuery),
       wikidata_pep: this.compliance.searchWikidataPEP(this.searchQuery),
       fbi: this.compliance.searchFBI(this.searchQuery),
-      aleph: this.compliance.searchAleph(this.searchQuery)
+      aleph: this.compliance.searchAleph(this.searchQuery),
+      openfda: this.compliance.searchOpenFDA(this.searchQuery),
+      sec: this.compliance.searchSEC(this.searchQuery),
+      gleif: this.compliance.searchGLEIF(this.searchQuery)
     };
 
     forkJoin(requests).pipe(
@@ -357,10 +406,14 @@ export class DashboardComponent implements OnDestroy {
       factors.push('Politically Exposed Person (PEP) identified');
     }
 
-    // MEDIUM: World Bank Debarred
+    // MEDIUM: World Bank Debarred & OpenFDA
     if (r.worldbank?.total > 0) {
       score = Math.max(score, 80);
       factors.push('Found in World Bank Debarred list');
+    }
+    if (r.openfda?.results?.length > 0) {
+      score = Math.max(score, 60);
+      factors.push('Subject to FDA enforcement/recall actions');
     }
 
     // MEDIUM: Investigative Records (Aleph, LittleSis)
@@ -371,6 +424,14 @@ export class DashboardComponent implements OnDestroy {
     if (r.littlesis?.data?.length > 0) {
       score = Math.max(score, 40);
       factors.push('Subject of corporate influence tracking (LittleSis)');
+    }
+
+    // LOW/INFO: SEC Filings & GLEIF
+    if (r.sec?.hits?.hits?.length > 0) {
+      factors.push('Entity registered with SEC EDGAR');
+    }
+    if (r.gleif?.data?.length > 0) {
+      factors.push('Global Legal Entity Identifier (LEI) verified');
     }
 
     // LOW: Corporate Registries
@@ -422,10 +483,10 @@ export class DashboardComponent implements OnDestroy {
   shouldShowCard(type: string): boolean {
     if (this.activeCategory === 'unified') return true;
     if (this.activeCategory === 'sanctions') {
-      return ['littlesis', 'interpol', 'global_sanctions', 'fbi', 'aleph'].includes(type);
+      return ['littlesis', 'interpol', 'global_sanctions', 'fbi', 'aleph', 'openfda'].includes(type);
     }
     if (this.activeCategory === 'entities') {
-      return ['etalab', 'worldbank', 'littlesis'].includes(type);
+      return ['etalab', 'worldbank', 'littlesis', 'sec', 'gleif'].includes(type);
     }
     if (this.activeCategory === 'world') {
       return ['wikidata', 'worldbank'].includes(type);

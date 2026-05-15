@@ -64,6 +64,27 @@ const PROXY_CONFIG = {
       "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)",
       "Accept": "application/sparql-results+json"
     }
+  },
+  "/api-proxy/openfda": {
+    "target": "https://api.fda.gov",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/openfda": "" }
+  },
+  "/api-proxy/sec": {
+    "target": "https://efts.sec.gov",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/sec": "" },
+    "headers": {
+      "User-Agent": "ComplianceDashboard/1.0 (compliance@example.com)"
+    }
+  },
+  "/api-proxy/gleif": {
+    "target": "https://api.gleif.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api-proxy/gleif": "" }
   }
 };
 

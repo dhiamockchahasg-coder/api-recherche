@@ -61,7 +61,10 @@ export class ComplianceService {
     littlesis_rels: '/api-proxy/littlesis/api/entities',
     fbi_wanted: '/api-proxy/fbi/wanted/v1/list',
     aleph: '/api-proxy/aleph/api/2/entities',
-    wikidata_sparql: '/api-proxy/wikidata-sparql/sparql'
+    wikidata_sparql: '/api-proxy/wikidata-sparql/sparql',
+    openfda: '/api-proxy/openfda/drug/enforcement.json',
+    sec_search: '/api-proxy/sec/LATEST/search-index',
+    gleif: '/api-proxy/gleif/api/v1/lei-records'
   };
 
 
@@ -181,6 +184,30 @@ export class ComplianceService {
     return this.http.get<any>(this.endpoints.wikidata_sparql, { params }).pipe(
       timeout(environment.apiTimeout),
       catchError(() => of({ results: { bindings: [] } }))
+    );
+  }
+
+  searchOpenFDA(query: string): Observable<any> {
+    const params = new HttpParams().set('search', `recalling_firm:"${query}"`).set('limit', '5');
+    return this.http.get<any>(this.endpoints.openfda, { params }).pipe(
+      timeout(15000),
+      catchError(() => of({ results: [] }))
+    );
+  }
+
+  searchSEC(query: string): Observable<any> {
+    const params = new HttpParams().set('q', query);
+    return this.http.get<any>(this.endpoints.sec_search, { params }).pipe(
+      timeout(15000),
+      catchError(() => of({ hits: { hits: [] } }))
+    );
+  }
+
+  searchGLEIF(query: string): Observable<any> {
+    const params = new HttpParams().set('filter[entity.legalName]', query);
+    return this.http.get<any>(this.endpoints.gleif, { params }).pipe(
+      timeout(15000),
+      catchError(() => of({ data: [] }))
     );
   }
 
