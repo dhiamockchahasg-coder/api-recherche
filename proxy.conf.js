@@ -40,23 +40,6 @@ const PROXY_CONFIG = {
       "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
     }
   },
-  "/api-proxy/gels-avoirs": {
-    "target": "https://gels-avoirs.dgtresor.gouv.fr",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/gels-avoirs": "" },
-    "headers": {
-      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)",
-      "Accept": "application/json"
-    }
-  },
-  "/api-proxy/un-sanctions": {
-    "target": "https://scsanctions.un.org",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/un-sanctions": "" },
-    "followRedirects": true
-  },
   "/api-proxy/fbi": {
     "target": "https://api.fbi.gov",
     "secure": true,
@@ -71,55 +54,6 @@ const PROXY_CONFIG = {
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": { "^/api-proxy/aleph": "" }
-  },
-  "/api-proxy/csl": {
-    "target": "https://api.trade.gov",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/csl": "" }
-  },
-  "/api-proxy/uk-sanctions": {
-    "target": "https://ofsistorage.blob.core.windows.net",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/uk-sanctions": "" }
-  },
-  "/api-proxy/opensanctions": {
-    "target": "https://api.opensanctions.org",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/opensanctions": "" },
-    "headers": {
-      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
-    }
-  },
-  "/api-proxy/eu-sanctions": {
-    "target": "https://webgate.ec.europa.eu",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/eu-sanctions": "" },
-    "followRedirects": true
-  },
-  "/api-proxy/inpi": {
-    "target": "https://api.inpi.fr",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/inpi": "" },
-    "headers": {
-      "User-Agent": "ComplianceDashboard/1.0 (https://localhost:4200)"
-    }
-  },
-  "/api-proxy/opencorporates": {
-    "target": "https://api.opencorporates.com",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/opencorporates": "" }
-  },
-  "/api-proxy/icij": {
-    "target": "https://offshoreleaks.icij.org",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": { "^/api-proxy/icij": "" }
   },
   "/api-proxy/wikidata-sparql": {
     "target": "https://query.wikidata.org",

@@ -1,13 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [DashboardComponent],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  template: `<app-dashboard></app-dashboard>`
 })
-export class App {
-  protected readonly title = signal('lcb-ft-compliance');
-}
+export class App {}

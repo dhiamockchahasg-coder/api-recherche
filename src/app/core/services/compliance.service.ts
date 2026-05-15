@@ -2,13 +2,50 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
 import { catchError, timeout, map, shareReplay } from 'rxjs/operators';
-import {
-  LittleSisResponse,
-  EtalabResponse,
-  InterpolResponse,
-  WorldBankResponse,
-  GelAvoirsResponse
-} from '../../models/compliance.models';
+export interface InterpolNotice {
+  forename: string;
+  name: string;
+}
+
+export interface InterpolResponse {
+  total: number;
+  _embedded: {
+    notices: InterpolNotice[];
+  };
+}
+
+export interface EtalabEntreprise {
+  siren: string;
+  nom_complet: string;
+}
+
+export interface EtalabResponse {
+  results: EtalabEntreprise[];
+  total_results: number;
+}
+
+export interface WorldBankDocument {
+  display_title: string;
+  docdt: string;
+}
+
+export interface WorldBankResponse {
+  total: number;
+  documents: { [key: string]: WorldBankDocument };
+}
+
+export interface LittleSisEntity {
+  id: number;
+  attributes: {
+    name: string;
+    blurb: string;
+    primary_ext: string;
+  };
+}
+
+export interface LittleSisResponse {
+  data: LittleSisEntity[];
+}
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -22,22 +59,11 @@ export class ComplianceService {
     worldbank: '/api-proxy/worldbank/api/v3/wds',
     wikidata: '/api-proxy/wikidata/api.php',
     littlesis_rels: '/api-proxy/littlesis/api/entities',
-    gels_avoirs: '/api-proxy/gels-avoirs/ApiPublic/api/v1/publication/derniere-publication-fichier-json',
-    un_sanctions: '/api-proxy/un-sanctions/resources/xml/en/consolidated.xml',
     fbi_wanted: '/api-proxy/fbi/wanted/v1/list',
     aleph: '/api-proxy/aleph/api/2/entities',
-    csl: '/api-proxy/csl/static/consolidated_screening_list/consolidated.json',
-    opensanctions: '/api-proxy/opensanctions/match/default',
-    eu_sanctions: '/api-proxy/eu-sanctions/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content',
-    opencorporates: '/api-proxy/opencorporates/v0.4/companies/search',
-    icij: '/api-proxy/icij/api/v1/reconcile/pandora-papers',
-    wikidata_sparql: '/api-proxy/wikidata-sparql/sparql',
-    inpi_rbe: '/api-proxy/inpi/entreprises'
+    wikidata_sparql: '/api-proxy/wikidata-sparql/sparql'
   };
 
-  // Cache for large static feeds
-  private cslCache$?: Observable<any>;
-  private frenchCache$?: Observable<any>;
 
   constructor(private http: HttpClient) { }
 
@@ -73,26 +99,16 @@ export class ComplianceService {
   }
 
   searchGlobalSanctions(query: string): Observable<any> {
+    // Simplified: Focus on World Bank and Interpol as primary global sources
     return forkJoin({
-      french: this.searchFrenchSanctions(query),
-      un: this.searchUNSanctions(query),
-      eu: this.searchEUSanctions(query),
-      opensanctions: this.searchOpenSanctions(query),
-      csl: this.searchCSL(query)
+      worldbank: this.searchWorldBank(query),
+      interpol: this.searchInterpol(query)
     }).pipe(
       map(res => {
-        const found = (res.french.publications?.length > 0) || 
-                      res.un.found || 
-                      res.eu.found ||
-                      (res.opensanctions?.responses?.q1?.results?.length > 0) ||
-                      (res.csl.total > 0);
-        
+        const found = (res.worldbank.total > 0) || (res.interpol.total > 0);
         const sources = [
-          ...(res.french.publications?.length ? ['French National (DGTrésor)'] : []),
-          ...(res.un.found ? ['United Nations (UNSC)'] : []),
-          ...(res.eu.found ? ['European Union (CFSP)'] : []),
-          ...(res.opensanctions?.responses?.q1?.results?.length ? ['OpenSanctions (Global)'] : []),
-          ...(res.csl.results?.map((item: any) => item.source) || [])
+          ...(res.worldbank.total > 0 ? ['World Bank Debarred List'] : []),
+          ...(res.interpol.total > 0 ? ['Interpol Red Notices'] : [])
         ];
 
         return {
@@ -105,79 +121,6 @@ export class ComplianceService {
       catchError(err => {
         console.error('Global Sanctions Error:', err);
         return of({ found: false, sources: [], details: {} });
-      })
-    );
-  }
-
-  searchFrenchSanctions(query: string): Observable<GelAvoirsResponse> {
-    if (!this.frenchCache$) {
-      this.frenchCache$ = this.http.get<any>(this.endpoints.gels_avoirs).pipe(
-        shareReplay(1),
-        catchError(() => of(null))
-      );
-    }
-
-    return this.frenchCache$.pipe(
-      map(response => {
-        if (!response) return { publications: [] };
-        const all = response?.Publications?.PublicationDetail || [];
-        const q = query.toLowerCase().trim();
-        const filtered = all.filter((p: any) => {
-          const nom = (p.Nom || '').toLowerCase();
-          const details = p.RegistreDetail || [];
-          const aliases = details
-            .filter((d: any) => d.TypeChamp === 'ALIAS' || d.TypeChamp === 'PRENOM')
-            .flatMap((d: any) => (d.Valeur || []).map((v: any) => (v.Alias || v.Prenom || '').toLowerCase()));
-          return nom.includes(q) || aliases.some((a: string) => a.includes(q));
-        });
-        return {
-          publications: filtered.slice(0, 5).map((p: any) => ({
-            id: p.IdRegistre?.toString(),
-            nom: p.Nom,
-            motif: p.RegistreDetail?.find((d: any) => d.TypeChamp === 'MOTIFS')?.Valeur?.[0]?.Motif || ''
-          }))
-        };
-      })
-    );
-  }
-
-  searchUNSanctions(query: string): Observable<any> {
-    return this.http.get(this.endpoints.un_sanctions, { responseType: 'text' }).pipe(
-      map(xmlString => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-        const q = query.toLowerCase().trim();
-        
-        // Comprehensive search in FIRST_NAME, SECOND_NAME, and COMMENTS
-        const elements = Array.from(xmlDoc.querySelectorAll('FIRST_NAME, SECOND_NAME, COMMENTS, NATIONALITY'));
-        const matches = elements.filter(el => el.textContent?.toLowerCase().includes(q));
-
-        return {
-          found: matches.length > 0,
-          matches: [...new Set(matches.slice(0, 5).map(m => m.textContent?.trim()))]
-        };
-      }),
-      catchError(() => of({ found: false, matches: [] }))
-    );
-  }
-
-  searchCSL(query: string): Observable<any> {
-    if (!this.cslCache$) {
-      this.cslCache$ = this.http.get<any>(this.endpoints.csl).pipe(
-        shareReplay(1),
-        catchError(() => of({ results: [] }))
-      );
-    }
-
-    return this.cslCache$.pipe(
-      map(response => {
-        const all = response.results || [];
-        const q = query.toLowerCase().trim();
-        const matches = all.filter((item: any) => 
-          (item.name || '').toLowerCase().includes(q) || 
-          (item.alt_names || []).some((alt: string) => alt.toLowerCase().includes(q))
-        );
-        return { total: matches.length, results: matches.slice(0, 10) };
       })
     );
   }
@@ -219,66 +162,9 @@ export class ComplianceService {
     );
   }
 
-  searchOpenSanctions(query: string): Observable<any> {
-    const body = {
-      queries: {
-        q1: {
-          schema: "Person",
-          properties: {
-            name: [query]
-          }
-        }
-      }
-    };
-    return this.http.post<any>(this.endpoints.opensanctions, body).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ responses: { q1: { results: [] } } }))
-    );
-  }
 
-  searchEUSanctions(query: string): Observable<any> {
-    return this.http.get(this.endpoints.eu_sanctions, { responseType: 'text' }).pipe(
-      map(xmlString => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-        const q = query.toLowerCase().trim();
-        
-        // Search in nameAlias and other relevant tags
-        const nameAliases = Array.from(xmlDoc.querySelectorAll('nameAlias'));
-        const matches = nameAliases.filter(el => {
-          const firstName = el.getAttribute('firstName')?.toLowerCase() || '';
-          const lastName = el.getAttribute('lastName')?.toLowerCase() || '';
-          const wholeName = el.getAttribute('wholeName')?.toLowerCase() || '';
-          return firstName.includes(q) || lastName.includes(q) || wholeName.includes(q);
-        });
 
-        return {
-          found: matches.length > 0,
-          matches: matches.slice(0, 5).map(m => m.getAttribute('wholeName') || m.getAttribute('lastName') || 'Unknown')
-        };
-      }),
-      catchError(() => of({ found: false, matches: [] }))
-    );
-  }
 
-  searchOpenCorporates(query: string): Observable<any> {
-    return this.http.get<any>(this.endpoints.opencorporates, { params: { q: query } }).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ results: { total_count: 0, companies: [] } }))
-    );
-  }
-
-  searchICIJ(query: string): Observable<any> {
-    const body = {
-      queries: {
-        q1: { query }
-      }
-    };
-    return this.http.post<any>(this.endpoints.icij, body).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ q1: { result: [] } }))
-    );
-  }
 
   searchWikidataPEP(query: string): Observable<any> {
     const sparql = `
@@ -298,11 +184,4 @@ export class ComplianceService {
     );
   }
 
-  getBeneficiairesEffectifs(siren: string): Observable<any> {
-    const url = `${this.endpoints.inpi_rbe}/${siren}/beneficiaires-effectifs`;
-    return this.http.get<any>(url).pipe(
-      timeout(environment.apiTimeout),
-      catchError(() => of({ beneficiaires_effectifs: [] }))
-    );
-  }
 }
